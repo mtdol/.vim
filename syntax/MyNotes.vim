@@ -17,13 +17,21 @@ syn match definitionKey '\v(^\s*)@<=\S.*(\s:\-\s*$)@='
 " match keywords for important information
 syn match importantWords '\v\CNote:|NOTE:|Important:|IMPORTANT:|Remember:|REMEMBER:|Todo:|TODO:'
 
-syn match listSegmentHeader '\v(^\s*)@<=\d*\.\s(\S.*$)@='
+" the markers of a list element such as '. ' or '23. ' or '.. ' for an indented
+" list
+" ie.
+" . Main idea
+"   .. Sub idea
+"       1... Sub Sub idea1
+"       2... Sub Sub idea2
+"   .. Another Sub idea
+syn match listSegmentHeader '\v(^\s*)@<=\d*\.+\s(\S.*$)@='
 
 " highlight the earlier definitions
-hi def link headerText Todo
-hi def link enderText Todo
+hi def link headerText Underlined
+hi def link enderText Underlined
 hi def link definitionKey Statement
 hi def link importantWords Comment
-hi def link listSegmentHeader Constant
+hi def link listSegmentHeader Statement
 
 let b:current_syntax = "MyNotes"
