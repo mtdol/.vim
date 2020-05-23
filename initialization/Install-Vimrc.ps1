@@ -36,7 +36,7 @@ if (Test-Path ~\.vim\vimbackups\undos -eq $false) {
 
 # create necessary files, if they do not exist
 if (Test-Path ~\.vim\quick_locations.txt -eq $false) {
-    Set-Content ~\.vim\quick_locations.txt "# this is a comment`nentries are of form `"label`":path`n`n# This File`n`"Quick Locations`":~\.vim\quick_locations.txt > ~/.vim/quick_locations.txt"
+    Set-Content ~\.vim\quick_locations.txt "# this is a comment`nentries are of form `"label`":path`n`n# This File`n`"Quick Locations`":~\.vim\quick_locations.txt"
 }
 if (Test-Path ~\.vim\vimrc_exceptions.vim -eq $false) {
     New-Item ~\.vim\vimrc_exceptions.vim
