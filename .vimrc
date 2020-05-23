@@ -599,7 +599,7 @@ command! -nargs=+ FindFile call FindFiles(<f-args>)
 "}}}
 
 "{{{------Source Custom Modules
-source ~/.vim/custom_modules/*
+source ~/.vim/custom_modules/MyNotesFold/MyNotesFold.vim
 "}}}
 "{{{ ------Source Vim Code Unique to this System
 source ~/.vim/vimrc_exceptions.vim

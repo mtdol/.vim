@@ -11,6 +11,7 @@ if [ ! -f ~/.gvimrc ]
 then
 ln -s ~/.vim/.gvimrc ~/.gvimrc
 fi
+
 if [ ! -f ~/.vsvimrc ]
 then
 ln -s ~/.vim/.vsvimrc ~/.vsvimrc

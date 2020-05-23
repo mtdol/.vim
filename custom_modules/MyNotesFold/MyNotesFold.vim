@@ -41,7 +41,10 @@ endf
 " runs MyNotesFold function if the file has !MyNotes at the top
 function! CheckIfRunMyNotesFold()
     if getline(1)=~'\v\s*!MyNotes\s*'
-        call MyNotesFold() | call feedkeys("zm")
+        call MyNotesFold()
+        call feedkeys("zm")
+        set filetype=MyNotes
+        source ~/.vim/syntax/MyNotes.vim
     endif
 endf
 
