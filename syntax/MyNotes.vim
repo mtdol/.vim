@@ -12,7 +12,7 @@ syn match enderText '\v(^\s*)@<=/:[0-9](.*$)@='
 
 " matches a term defined as 'term :-'
 " matches only the 'term' part not the ' :-' part
-syn match definitionKey '\v(^\s*)@<=\S.*(\s:\-\s*$)@='
+syn match definitionKey '\v(^\s*)@<=\S.*(\s:\-.*$)@='
 
 " match keywords for important information
 syn match importantWords '\v\CNote:|NOTE:|Important:|IMPORTANT:|Remember:|REMEMBER:|Todo:|TODO:'
