@@ -250,6 +250,11 @@ augroup folding
     autocmd FileType Java setlocal foldmethod=syntax
 
     autocmd FileType Markdown setlocal foldexpr=MarkdownLevel() foldmethod=expr
+
+    " this is intended to prevent screwy syntax highlighting 
+    " particularly when scrolling up and down a buffer, long strings will fail
+    " to highlight properly.
+    autocmd BufEnter * :syntax sync fromstart
 augroup END
 
 "}}}2

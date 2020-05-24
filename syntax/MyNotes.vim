@@ -30,10 +30,15 @@ syn match listSegmentHeader '\v(^\s*)@<=\d*\.+\s(\S.*$)@='
 " similar to above but accepts a colon instead of a dot and requires a number
 syn match listSegmentHeader '\v(^\s*)@<=\d+:+\s(\S.*$)@='
 
-" lines that start with a dash (-) and are not definitions
-syn match dashLine '\v(^\s*\-+\s)@<=.+(\s:-.*$)@!'
+" These two regexes are the same except for being one char different.
+" The first matches lines that have arbitrary whitespace and then '-', the other '*'
+" Both of these essentially keep going until they hit another keyword or a blank line
+" Additionally the label can be ended with a space followed by '-' or '*' 
+" at the end of the line: 
+" '-' for - lists and '*' for * lists.
+syn match dashLine '\v(^\s*\-+\s)@<=\_.{-}(\n\s*\n|(^\s*\d*[\*\.\-\:]+\s+)@=|(^.+:-.*$)@=|(^.+::[0-9]?\s*$)@=|(^\s*/:\d+.*$)@=|(\s-+$)@=)'
 " same as above, but with *
-syn match starLine '\v(^\s*\*+\s)@<=.+(\s:-.*$)@!'
+syn match starLine '\v(^\s*\*+\s)@<=\_.{-}(\n\s*\n|(^\s*\d*[\*\.\-\:]+\s+)@=|(^.+:-.*$)@=|(^.+::[0-9]?\s*$)@=|(^\s*/:\d+.*$)@=|(\s\*+$)@=)'
 
 " highlight the earlier definitions
 hi def link headerText Underlined

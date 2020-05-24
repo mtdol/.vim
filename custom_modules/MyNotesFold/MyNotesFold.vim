@@ -30,6 +30,10 @@ function! MyNotesFold()
             return '>4'
         elseif getline(v:lnum)=~'\v^\s*/:4.*$'
             return '<4'
+        elseif getline(v:lnum)=~'\v^.+::5\s*$'
+            return '>5'
+        elseif getline(v:lnum)=~'\v^\s*/:5.*$'
+            return '<5'
         else
             return '='
         endif
