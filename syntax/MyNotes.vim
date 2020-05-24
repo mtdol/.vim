@@ -36,9 +36,13 @@ syn match listSegmentHeader '\v(^\s*)@<=\d+:+\s(\S.*$)@='
 " Additionally the label can be ended with a space followed by '-' or '*' 
 " at the end of the line: 
 " '-' for - lists and '*' for * lists.
-syn match dashLine '\v(^\s*\-+\s)@<=\_.{-}(\n\s*\n|(^\s*\d*[\*\.\-\:]+\s+)@=|(^.+:-.*$)@=|(^.+::[0-9]?\s*$)@=|(^\s*/:\d+.*$)@=|(\s-+$)@=)'
+syn match dashLine '\v(^\s*\-+\s)@<=\_.{-}((\n\s*\n)@=|(%$)@=|(^\s*\d*[\*\.\-\:]+\s+)@=|(^.+:-.*$)@=|(^.+::[0-9]?\s*$)@=|(^\s*/:\d+.*$)@=|(\s-+$)@=)'
 " same as above, but with *
-syn match starLine '\v(^\s*\*+\s)@<=\_.{-}(\n\s*\n|(^\s*\d*[\*\.\-\:]+\s+)@=|(^.+:-.*$)@=|(^.+::[0-9]?\s*$)@=|(^\s*/:\d+.*$)@=|(\s\*+$)@=)'
+syn match starLine '\v(^\s*\*+\s)@<=\_.{-}((\n\s*\n)@=|(%$)@=|(^\s*\d*[\*\.\-\:]+\s+)@=|(^.+:-.*$)@=|(^.+::[0-9]?\s*$)@=|(^\s*/:\d+.*$)@=|(\s\*+$)@=)'
+
+" matches the left side of expressions like 'leftside: anything here' where
+" the previous line is blank
+syn match colonLeft '\v(^\s*$\_.{-}^\s*)@<=\S.*[^\:]:($)@='
 
 " highlight the earlier definitions
 hi def link headerText Underlined
@@ -49,5 +53,6 @@ hi def link urgentWords Todo
 hi def link listSegmentHeader Statement
 hi def link dashLine Identifier
 hi def link starLine Constant
+hi def link colonLeft PreProc
 
 let b:current_syntax = "MyNotes"
