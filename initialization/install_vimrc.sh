@@ -46,7 +46,7 @@ fi
 # make necessary files
 if [ ! -f ~/.vim/quick_locations.txt ]
 then
-printf '# this is a comment\nentries are of form "label":path\n\n# This File\n"Quick Locations":~\.vim\quick_locations.txt' > ~/.vim/quick_locations.txt
+printf '# this is a comment\nentries are of form "label":path\n\n# This File\n"Quick Locations":~/.vim/quick_locations.txt' > ~/.vim/quick_locations.txt
 fi
 
 if [ ! -f ~/.vim/vimrc_exceptions.vim ]
