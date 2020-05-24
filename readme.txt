@@ -45,7 +45,7 @@ in addition to the plain "::" to mark a particular passage and "/:1" to mark its
 Lists::4
 * '-' and '*' are used to make list elements who have colored syntax.
     - Place these at the start of a line or after whitespace on a line
-    - Any expression made by these contstructs will continue forever until:
+    Any expression made by these contstructs will continue forever until:
         1. An Empty Line is reached
         2. Another construct is reached
         3. A particular terminator is reached
@@ -63,6 +63,10 @@ number followed by either arbitrarily many '.' or ':' followed by a space charac
             . Plain Element
                 .. Another Plain Element
         34. 2 digit number
+
+* Term headers can also be made using a colon
+    Expressions look like this:
+        - There is no whitespace after the colon
 /:4
 Important Words::4
 The exact words Note:, Remember:, Important:, and Todo: will trigger important

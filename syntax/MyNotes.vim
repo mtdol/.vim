@@ -5,6 +5,10 @@ if exists("b:current_syntax")
     finish
 endif
 
+" when set to 1, runs intensive matching, when 0 does not
+" 0 is better for performance
+let intensive = 0
+
 " section headers
 syn match headerText '\v(^\s*)@<=\S.*(::[0-9]?\s*$)@='
 " section enders
@@ -30,19 +34,24 @@ syn match listSegmentHeader '\v(^\s*)@<=\d*\.+\s(\S.*$)@='
 " similar to above but accepts a colon instead of a dot and requires a number
 syn match listSegmentHeader '\v(^\s*)@<=\d+:+\s(\S.*$)@='
 
+" import performance heavy regexes
+if (intensive)
+
 " These two regexes are the same except for being one char different.
 " The first matches lines that have arbitrary whitespace and then '-', the other '*'
 " Both of these essentially keep going until they hit another keyword or a blank line
 " Additionally the label can be ended with a space followed by '-' or '*' 
 " at the end of the line: 
 " '-' for - lists and '*' for * lists.
-syn match dashLine '\v(^\s*\-+\s)@<=\_.{-}((\n\s*\n)@=|(%$)@=|(^\s*\d*[\*\.\-\:]+\s+)@=|(^.+:-.*$)@=|(^.+::[0-9]?\s*$)@=|(^\s*/:\d+.*$)@=|(\s-+$)@=)'
+syn match dashLine '\v(^\s*\-+\s)@<=\_.{-}%(%(\n\s*\n)@=|%(%$)@=|%(^\s*\d*[\*\.\-\:]+\s+)@=|%(^.+:-.*$)@=|%(^.+::[0-9]?\s*$)@=|%(^\s*/:\d+.*$)@=|%(\s-+$)@=|%(^\s*\S.*[^\:]:$)@=)'
 " same as above, but with *
-syn match starLine '\v(^\s*\*+\s)@<=\_.{-}((\n\s*\n)@=|(%$)@=|(^\s*\d*[\*\.\-\:]+\s+)@=|(^.+:-.*$)@=|(^.+::[0-9]?\s*$)@=|(^\s*/:\d+.*$)@=|(\s\*+$)@=)'
+syn match starLine '\v(^\s*\*+\s)@<=\_.{-}%(%(\n\s*\n)@=|%(%$)@=|%(^\s*\d*[\*\.\-\:]+\s+)@=|%(^.+:-.*$)@=|%(^.+::[0-9]?\s*$)@=|%(^\s*/:\d+.*$)@=|%(\s\*+$)@=|%(^\s*\S.*[^\:]:$)@=)'
 
-" matches the left side of expressions like 'leftside: anything here' where
-" the previous line is blank
-syn match colonLeft '\v(^\s*$\_.{-}^\s*)@<=\S.*[^\:]:($)@='
+" matches the left side of expressions like 'leftside:' where
+" there is no space after the colon
+syn match colonLeft '\v%(^\s*)@<=\S{-}.*[^\:]:$'
+
+endif
 
 " highlight the earlier definitions
 hi def link headerText Underlined

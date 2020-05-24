@@ -114,6 +114,9 @@ set ttyfast
 " wrap lines
 set wrap
 
+" highlight the current line
+:set cul
+
 
 " draws the screen in my prefered format
 function! DrawScreenMyWay(...)
@@ -254,7 +257,13 @@ augroup folding
     " this is intended to prevent screwy syntax highlighting 
     " particularly when scrolling up and down a buffer, long strings will fail
     " to highlight properly.
-    autocmd BufEnter * :syntax sync fromstart
+    "
+    " The minlines argument speeds up the syntax analysis at the potential cost
+    " of multiline constructs not rendering properly
+    autocmd BufEnter * :syntax sync minlines=10
+
+    " keeps the syntax analysis from failing when it takes a while to load
+    set redrawtime=10000
 augroup END
 
 "}}}2
