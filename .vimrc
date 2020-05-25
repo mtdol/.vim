@@ -373,7 +373,7 @@ nnoremap <F3> :call ToggleTabHighlighting()<cr>
 function! DisplayCustomFunctions()
     echom "1: DisplayTabSettings"
     echom "2: DrawScreenMyWay"
-    echom "3: MyNotesFold"
+    echom "3: RunMyNotesFold"
     echom "4: SetTabFunctionality"
     echom "5: ToggleTabHighlighting"
     echom ""
@@ -385,7 +385,7 @@ function! SelectCustomFunctions(choice)
     elseif a:choice ==# 2
         let res = 'DrawScreenMyWay'
     elseif a:choice ==# 3
-        let res = 'MyNotesFold'
+        let res = 'RunMyNotesFold'
     elseif a:choice ==# 4
         let res = 'SetTabFunctionality'
     elseif a:choice ==# 5
@@ -623,6 +623,10 @@ command! -nargs=+ FindFile call FindFiles(<f-args>)
 
 "{{{------Source Custom Modules
 source ~/.vim/custom_modules/MyNotesFold/MyNotesFold.vim
+
+
+" pathogen
+execute pathogen#infect()
 "}}}
 "{{{ ------Source Vim Code Unique to this System
 source ~/.vim/vimrc_exceptions.vim

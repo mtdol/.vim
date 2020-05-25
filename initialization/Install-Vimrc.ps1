@@ -23,7 +23,7 @@ if (Test-Path ~\.vsvimrc -eq $false) {
 # causes .vim/vimfiles to just lead back to .vim (vim on windows uses the
 # vimfiles directory, but it is easier for versioning to just use .vim)
 if (Test-Path ~\.vim\vimfiles -eq $false) {
-    new-item -ItemType SymbolicLink -Path ~\.vim\vimfiles -Target ~\.vim\
+    new-item -ItemType SymbolicLink -Path ~\vimfiles -Target ~\.vim\
 }
 
 # now create necessary sub-directories, if they do not exist

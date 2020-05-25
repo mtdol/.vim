@@ -38,20 +38,39 @@ function! MyNotesFold()
             return '='
         endif
     endf
-    set filetype=MyNotes
-    source ~/.vim/syntax/MyNotes.vim
     :setlocal foldexpr=Aux()
     :setlocal foldmethod=expr
 endf
 
-" runs MyNotesFold function if the file has !MyNotes at the top
-function! CheckIfRunMyNotesFold()
-    if getline(1)=~'\v\s*!MyNotes\s*'
-        call MyNotesFold()
-        call feedkeys("zm")
+" runs MyNotesFold function if the file has !MyNotes at the top, or the user
+" specifies to force the run
+function! RunMyNotesFold(intensive = 1)
+
+    set filetype=MyNotes
+    source ~/.vim/syntax/MyNotes.vim
+    call MyNotesFold()
+    call feedkeys("zm")
+
+    " don't load intensive matches if specified
+    if a:intensive == 0
+        syn clear dashLine 
+        syn clear starLine 
+        syn clear tildeLine
+        syn clear bangLine 
     endif
 endf
 
+function! CheckIfMyNotes()
+    return getline(1)=~'\v\s*!MyNotes\s*'
+endf
+
+" changes settings that usually slow down this filetype
+function! ApplyMyNotesOptimizations()
+    setl nocul 
+    setl norelativenumber
+endf
+
 augroup MyNotesFold
-    autocmd FileType text :call CheckIfRunMyNotesFold()
+    autocmd FileType text :if CheckIfMyNotes() | call RunMyNotesFold()
+    autocmd FileType text :if CheckIfMyNotes() | call ApplyMyNotesOptimizations()
 augroup END
