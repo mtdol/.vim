@@ -38,6 +38,7 @@ function! MyNotesFold()
             return '='
         endif
     endf
+    set filetype=MyNotes
     source ~/.vim/syntax/MyNotes.vim
     :setlocal foldexpr=Aux()
     :setlocal foldmethod=expr
@@ -46,10 +47,8 @@ endf
 " runs MyNotesFold function if the file has !MyNotes at the top
 function! CheckIfRunMyNotesFold()
     if getline(1)=~'\v\s*!MyNotes\s*'
-        set filetype=MyNotes
         call MyNotesFold()
         call feedkeys("zm")
-        source ~/.vim/syntax/MyNotes.vim
     endif
 endf
 

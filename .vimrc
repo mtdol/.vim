@@ -260,7 +260,7 @@ augroup folding
     "
     " The minlines argument speeds up the syntax analysis at the potential cost
     " of multiline constructs not rendering properly
-    autocmd BufEnter * :syntax sync minlines=10
+    "autocmd BufEnter * :syntax sync minlines=7
 
     " keeps the syntax analysis from failing when it takes a while to load
     set redrawtime=10000
@@ -335,6 +335,9 @@ set <M-l>=l
 "<F1> ---{{{3
 " enable easy toggling of relative numbers
 nnoremap <F1> :set relativenumber!<cr>
+
+" also allow toggling of cursor highlighting
+nnoremap <leader><F1> :set cul!<cr>
 "}}}3
 "<F2> ---{{{3
 " allow easy toggling of spell mode
@@ -421,6 +424,8 @@ nnoremap <F5> :call DisplayFrequentLocations()<cr>:call SelectFrequentLocations(
 nnoremap <F12> :edit $MYVIMRC<cr>
 " allows easy resourcing of the vimrc
 nnoremap <leader><F12> :source $MYVIMRC<cr>
+" opens the vimrc in a new tab
+nnoremap -<F12> :tabe $MYVIMRC<cr>
 "}}}3
 "}}}2
 "General Mappings ---{{{2

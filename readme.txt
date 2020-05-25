@@ -17,11 +17,13 @@ This is usually handled by the setup scripts, but if you are not seeing the
 symbolic links appear for some reason, you will need to create them.
 
 Quick Locations::
-quick_locations.txt is used by the <F5> key to display a quick list of
-locations for editing. Lines that start with # are comments and quick links are
-written in the form 
-- "label":location -
-and are loaded in the order they are listed
+* quick_locations.txt is used by the <F5> key to display a quick list of
+** locations for editing. Lines that start with # are comments and quick links are
+** written in the form:
+
+- "label":location
+
+** and are loaded in the order they are listed
 
 Vimrc Exceptions::
 vimrc_exceptions.vim is loaded at the very end of the .vimrc and is used
@@ -43,17 +45,21 @@ of a line (important, the beginning, not the end) to mark the end of this sectio
 in addition to the plain "::" to mark a particular passage and "/:1" to mark its end
 /:4
 Lists::4
-* '-' and '*' are used to make list elements who have colored syntax.
-    - Place these at the start of a line or after whitespace on a line
-    Any expression made by these contstructs will continue forever until:
-        1. An Empty Line is reached
-        2. Another construct is reached
-        3. A particular terminator is reached
-            * The symbol that was used to start the list is used as the terminator
-            * The terminator must not be followed by whitespace, only a newline
-* Lists can also be made with '\d*.+\s' and '\d+:+\s', ie. an optional (in the first case)
-number followed by either arbitrarily many '.' or ':' followed by a space character
-    - Examples:
+* '-', '*', and '~' are used to make elements that have colored syntax.
+    1. Place these at the start of a line or after whitespace on a line
+    2. Any expression made by these contstructs will continue until the end of the line
+    3. The expression can be nullified by placing anything before it on the line
+        ~ Ex:
+            /~ will not highlight
+    4. The idiomatic way to continue a highlighted line is to double the symbol
+        ~ Ex: 
+            - This is a line of text that will end up being too long
+            -- and will have to be continued on the next line.
+
+* Lists can be constructed by a number followed by either
+** arbitrarily many '.' or ':' followed by a space character
+** or just a '.' followed by space
+    ~ Ex:
         1. Element 1
         2. Element 2
             1.. Another element
@@ -64,9 +70,6 @@ number followed by either arbitrarily many '.' or ':' followed by a space charac
                 .. Another Plain Element
         34. 2 digit number
 
-* Term headers can also be made using a colon
-    Expressions look like this:
-        - There is no whitespace after the colon
 /:4
 Important Words::4
 The exact words Note:, Remember:, Important:, and Todo: will trigger important
@@ -75,7 +78,16 @@ word syntax highlighting
 The exact words NOTE, NOTE:, REMEMBER, REMEMBER:, IMPORTANT, IMPORTANT:,
 TODO, and TODO: will trigger urgent syntax highlighting
 /:4
+Definitions::4
+* Definitions can be marked with the ":-" construct
+~ Ex:
+    This is a term :-
+        This is its definition
 
+- The definition can either be placed on the same line as the construct
+-- or on the next line (usually indented)
+
+/:4
 Additionally it should be noted that this document features this brand of note
 folding, so feel free to experiment around with it.
 

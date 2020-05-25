@@ -7,7 +7,7 @@ endif
 
 " when set to 1, runs intensive matching, when 0 does not
 " 0 is better for performance
-let intensive = 0
+let intensive = 1
 
 " section headers
 syn match headerText '\v(^\s*)@<=\S.*(::[0-9]?\s*$)@='
@@ -43,13 +43,18 @@ if (intensive)
 " Additionally the label can be ended with a space followed by '-' or '*' 
 " at the end of the line: 
 " '-' for - lists and '*' for * lists.
-syn match dashLine '\v(^\s*\-+\s)@<=\_.{-}%(%(\n\s*\n)@=|%(%$)@=|%(^\s*\d*[\*\.\-\:]+\s+)@=|%(^.+:-.*$)@=|%(^.+::[0-9]?\s*$)@=|%(^\s*/:\d+.*$)@=|%(\s-+$)@=|%(^\s*\S.*[^\:]:$)@=)'
+"syn match dashLine '\v(^\s*\-+\s)@<=\_.{-}%(%(\n\s*\n)@=|%(%$)@=|%(^\s*\d*[\*\.\-\:]+\s+)@=|%(^.+:-.*$)@=|%(^.+::[0-9]?\s*$)@=|%(^\s*/:\d+.*$)@=|%(\s-+$)@=|%(^\s*\S.*[^\:]:$)@=)'
 " same as above, but with *
-syn match starLine '\v(^\s*\*+\s)@<=\_.{-}%(%(\n\s*\n)@=|%(%$)@=|%(^\s*\d*[\*\.\-\:]+\s+)@=|%(^.+:-.*$)@=|%(^.+::[0-9]?\s*$)@=|%(^\s*/:\d+.*$)@=|%(\s\*+$)@=|%(^\s*\S.*[^\:]:$)@=)'
+"syn match starLine '\v(^\s*\*+\s)@<=\_.{-}%(%(\n\s*\n)@=|%(%$)@=|%(^\s*\d*[\*\.\-\:]+\s+)@=|%(^.+:-.*$)@=|%(^.+::[0-9]?\s*$)@=|%(^\s*/:\d+.*$)@=|%(\s\*+$)@=|%(^\s*\S.*[^\:]:$)@=)'
 
 " matches the left side of expressions like 'leftside:' where
 " there is no space after the colon
-syn match colonLeft '\v%(^\s*)@<=\S{-}.*[^\:]:$'
+"syn match colonLeft '\v%(^\s*)@<=\S{-}.*[^\:]:$'
+
+" matches a line that starts with one or more '-', '*', or '~'
+syn match dashLine '\v%(^\s*\-+\s)@<=.*$'
+syn match starLine '\v%(^\s*\*+\s)@<=.*$'
+syn match tildeLine '\v%(^\s*\~+\s)@<=.*$'
 
 endif
 
@@ -62,6 +67,6 @@ hi def link urgentWords Todo
 hi def link listSegmentHeader Statement
 hi def link dashLine Identifier
 hi def link starLine Constant
-hi def link colonLeft PreProc
+hi def link tildeLine PreProc
 
 let b:current_syntax = "MyNotes"
