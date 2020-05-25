@@ -44,8 +44,8 @@ of a line (important, the beginning, not the end) to mark the end of this sectio
 * The 2 in this expression can be generalized to any number 1-5 where 1 can be used
 in addition to the plain "::" to mark a particular passage and "/:1" to mark its end
 /:4
-Lists::4
-* '-', '*', and '~' are used to make elements that have colored syntax.
+Colored Lines and Lists::4
+* '-', '*', '~', and '!' are used to make elements that have colored syntax.
     1. Place these at the start of a line or after whitespace on a line
     2. Any expression made by these contstructs will continue until the end of the line
     3. The expression can be nullified by placing anything before it on the line
@@ -55,6 +55,14 @@ Lists::4
         ~ Ex: 
             - This is a line of text that will end up being too long
             -- and will have to be continued on the next line.
+
+! An exclamation mark is used for Todo highlighting
+!! Use this for areas that deserve high emphasis
+
+>> start lines with this construct
+>> to indicate a quotation
+    - This is a good idea for presenting code
+>>> more arrows can be added if needed
 
 * Lists can be constructed by a number followed by either
 ** arbitrarily many '.' or ':' followed by a space character

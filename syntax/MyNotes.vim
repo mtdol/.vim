@@ -51,10 +51,14 @@ if (intensive)
 " there is no space after the colon
 "syn match colonLeft '\v%(^\s*)@<=\S{-}.*[^\:]:$'
 
-" matches a line that starts with one or more '-', '*', or '~'
+" matches a line that starts with one or more of '-', '*', '~', '!'
 syn match dashLine '\v%(^\s*\-+\s)@<=.*$'
 syn match starLine '\v%(^\s*\*+\s)@<=.*$'
 syn match tildeLine '\v%(^\s*\~+\s)@<=.*$'
+syn match bangLine '\v%(^\s*\!+\s)@<=.*$'
+
+" allows highlighting of quoted lines (start with >>)
+syn match quoteLine '\v%(^\s*\>{2,}\s)@<=.*$'
 
 endif
 
@@ -68,5 +72,7 @@ hi def link listSegmentHeader Statement
 hi def link dashLine Identifier
 hi def link starLine Constant
 hi def link tildeLine PreProc
+hi def link bangLine Todo
+hi def link quoteLine Special
 
 let b:current_syntax = "MyNotes"

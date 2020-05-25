@@ -260,10 +260,14 @@ augroup folding
     "
     " The minlines argument speeds up the syntax analysis at the potential cost
     " of multiline constructs not rendering properly
-    "autocmd BufEnter * :syntax sync minlines=7
+    autocmd BufEnter * :syntax sync minlines=7
 
     " keeps the syntax analysis from failing when it takes a while to load
     set redrawtime=10000
+
+    " limits the number of columns that will be used in syntax highlighting
+    " computations
+    set synmaxcol=130
 augroup END
 
 "}}}2
