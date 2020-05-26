@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =5
+let g:netrw_dirhist_5='C:/Users/reads'
+let g:netrw_dirhist_4='C:/Users/reads/programming_crap'
+let g:netrw_dirhist_3='C:/Users/reads'
+let g:netrw_dirhist_2='C:\Users\reads\programming_crap'
+let g:netrw_dirhist_1='C:/Users/reads/programming_crap'
+let g:netrw_dirhist_0='C:\Users\reads\programming_crap'
+let g:netrw_dirhist_9='C:/Users/reads/programming_crap'
+let g:netrw_dirhist_8='C:\Users\reads\programming_crap'
+let g:netrw_dirhist_7='C:/Users/reads/programming_crap'
+let g:netrw_dirhist_6='C:\Users\reads\programming_crap'

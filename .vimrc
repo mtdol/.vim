@@ -151,7 +151,7 @@ call DrawScreenMyWay()
 " make statusline mandatory
 set laststatus=2
 " statusline settings
-set statusline=b%n\ \ %-4l\ %-3c\ %t\ %y%m\ %3p%%
+set statusline=b%n\ \ %-4l\ %-3c\ %t\ %y%m\ %3p%%\ 
 
 " turn off the annoying beeping and flashing
 set vb t_vb=
@@ -413,15 +413,21 @@ function! DisplayFrequentLocations()
 endf
 
 " places the frequent location directory as a command for the user
-function! SelectFrequentLocations(choice)
+function! SelectFrequentLocations(choice, tabedit = 0)
     if a:choice <=# len(g:freqLocations) && a:choice >#0 
         let res = split(g:freqLocations[a:choice - 1], '":')[1]
-        let feed = ':edit '.res
+        if a:tabedit == 0
+            let feed = ':edit '.res
+        else
+            let feed = ':tabedit '.res
+        endif
         call feedkeys(feed)
     endif
 endf
 
 nnoremap <F5> :call DisplayFrequentLocations()<cr>:call SelectFrequentLocations()<left>
+" allows tab editing
+nnoremap <leader><F5> :call DisplayFrequentLocations()<cr>:call SelectFrequentLocations(,1)<left><left><left>
 "}}}3
 "<F12> ---{{{3
 " allows easy editing of this vimrc
@@ -519,6 +525,9 @@ nnoremap <leader>l :ls<cr>:b
 
 " allows easier writing
 nnoremap <leader>w :write<cr>
+
+" allows universal closing of a buffer without closing a window
+nnoremap <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
 
 " allows easy access to the plus buffer
 nnoremap <leader><leader> "+
@@ -621,6 +630,33 @@ command! -nargs=+ FindFile call FindFiles(<f-args>)
 
 "}}}
 
+"Plugin Settings {{{
+"Netrw{{{
+" starts netrw without the banner by default
+let g:netrw_banner=0
+"}}}
+"Syntastic {{{2
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+
+" when enabled causes syntastic to check files when first loaded and when saving
+let g:syntastic_check_on_open = 1
+
+let g:syntastic_check_on_wq = 0
+
+" causes syntastic to not start up until asked
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
+
+" pops open syntastic
+nnoremap <C-w>e :SyntasticCheck<CR>
+" resets (hides)
+nnoremap <leader><C-w>e :SyntasticReset<CR>
+"}}}2
+"}}}
 "{{{------Source Custom Modules
 source ~/.vim/custom_modules/MyNotesFold/MyNotesFold.vim
 
