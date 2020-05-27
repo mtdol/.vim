@@ -114,9 +114,6 @@ set ttyfast
 " wrap lines
 set wrap
 
-" highlight the current line
-:set cul
-
 
 " draws the screen in my prefered format
 function! DrawScreenMyWay(...)
@@ -656,6 +653,11 @@ nnoremap <C-w>e :SyntasticCheck<CR>
 " resets (hides)
 nnoremap <leader><C-w>e :SyntasticReset<CR>
 "}}}2
+"avk.vim {{{
+" don't automatically jump to the first match
+cnoreabbrev ack Ack!
+cnoreabbrev ackf AckFile!
+"}}}
 "}}}
 "{{{------Source Custom Modules
 source ~/.vim/custom_modules/MyNotesFold/MyNotesFold.vim

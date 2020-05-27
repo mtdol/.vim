@@ -64,13 +64,21 @@ function! CheckIfMyNotes()
     return getline(1)=~'\v\s*!MyNotes\s*'
 endf
 
-" changes settings that usually slow down this filetype
+
+" changes settings that usually slow down this filetype, and make buffer specific
+" mappings
 function! ApplyMyNotesOptimizations()
     setl nocul 
     setl norelativenumber
+
+    " 1:: will now autocomplete to ::1 /:1
+    inoreabbrev <buffer> 1:: <left>::1<cr><cr>/:1<up>
+    inoreabbrev <buffer> 2:: <left>::2<cr><cr>/:2<up>
+    inoreabbrev <buffer> 3:: <left>::3<cr><cr>/:3<up>
+    inoreabbrev <buffer> 4:: <left>::4<cr><cr>/:4<up>
+    inoreabbrev <buffer> 5:: <left>::5<cr><cr>/:5<up>
 endf
 
 augroup MyNotesFold
-    autocmd FileType text :if CheckIfMyNotes() | call RunMyNotesFold()
-    autocmd FileType text :if CheckIfMyNotes() | call ApplyMyNotesOptimizations()
+    autocmd FileType text :if CheckIfMyNotes() | call RunMyNotesFold() | call ApplyMyNotesOptimizations()
 augroup END
