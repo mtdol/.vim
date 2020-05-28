@@ -28,13 +28,6 @@ augroup END
 
 
 "}}}
-"Plugins -----{{{
-" allows unix man pages to be read within vim (on unix system)
-" additionally <s-k> can be used to search up a term by going outside
-" of vim
-runtime ftplugin/man.vim
-
-"}}}
 "Sanity Settings -----{{{
 
 " make vim not poopy, ie. disable vi compatibility mode
@@ -55,10 +48,9 @@ set nomodeline
 " don't delete buffers from buffer list when their windows are closed
 set hidden
 
-" cause Netrw buffers to be closable
-augroup Netrw
-    autocmd FileType netrw setl bufhidden=wipe
-augroup END
+" This loads the file "ftplugin.vim" in 'runtimepath'.
+filetype plugin indent on
+
 
 "}}}
 "Search Functionality -----{{{
@@ -396,10 +388,10 @@ nnoremap <F4> :call DisplayCustomFunctions()<cr>:call SelectCustomFunctions()<le
 "}}}3
 "<F5> ---{{{3
 " grab the data from the quick_locations file in the .vim directory
-let g:freqLocations = readfile(expand('~/.vim/quick_locations.txt'))
+let g:freqLocations = readfile(expand('$HOME/.vim/quick_locations.txt'))
 " ensure that we only grab lines that match the syntax "label":path
 " and are not comments
-call filter(g:freqLocations, 'v:val !~ "^#.*$" && v:val =~ "\\v^\".+\":.+$"')
+call filter(g:freqLocations, 'v:val !~ "^#" && v:val =~ "\\v^\".+\":.+$"')
 
 " display frequent locations
 function! DisplayFrequentLocations()
@@ -410,29 +402,34 @@ function! DisplayFrequentLocations()
 endf
 
 " places the frequent location directory as a command for the user
-function! SelectFrequentLocations(choice, tabedit = 0)
+function! SelectFrequentLocations(choice, editMode = 0)
     if a:choice <=# len(g:freqLocations) && a:choice >#0 
         let res = split(g:freqLocations[a:choice - 1], '":')[1]
-        if a:tabedit == 0
+        if a:editMode ==# 0
             let feed = ':edit '.res
-        else
+        elseif a:editMode ==# 1
+            let feed = ':split '.res
+        elseif a:editMode ==# 2
+            let feed = ':vsplit '.res
+        elseif a:editMode ==# 3
             let feed = ':tabedit '.res
         endif
         call feedkeys(feed)
     endif
 endf
 
+" general buffer edit
 nnoremap <F5> :call DisplayFrequentLocations()<cr>:call SelectFrequentLocations()<left>
-" allows tab editing
+" allows editing in a new horizontal window
 nnoremap <leader><F5> :call DisplayFrequentLocations()<cr>:call SelectFrequentLocations(,1)<left><left><left>
+" vertical window
+nnoremap -<F5> :call DisplayFrequentLocations()<cr>:call SelectFrequentLocations(,2)<left><left><left>
+" allows tab editing
+nnoremap \<F5> :call DisplayFrequentLocations()<cr>:call SelectFrequentLocations(,3)<left><left><left>
 "}}}3
 "<F12> ---{{{3
-" allows easy editing of this vimrc
-nnoremap <F12> :edit $MYVIMRC<cr>
 " allows easy resourcing of the vimrc
-nnoremap <leader><F12> :source $MYVIMRC<cr>
-" opens the vimrc in a new tab
-nnoremap -<F12> :tabe $MYVIMRC<cr>
+nnoremap <F12> :source $MYVIMRC<cr>
 "}}}3
 "}}}2
 "General Mappings ---{{{2
@@ -443,7 +440,7 @@ nnoremap -<F12> :tabe $MYVIMRC<cr>
 " press gl to activate, press gl or <esc> in normal mode to deactivate
 let g:ScrollEnabled = 0
 function! ToggleScrollMode()
-  if g:ScrollEnabled == 0
+  if g:ScrollEnabled ==# 0
       nnoremap j <c-e>
       nnoremap k <c-y>
       nnoremap h 3<c-e>
@@ -524,7 +521,7 @@ nnoremap <leader>l :ls<cr>:b
 nnoremap <leader>w :write<cr>
 
 " allows universal closing of a buffer without closing a window
-nnoremap <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
+nnoremap <leader>q :bp<bar>sp<bar>bn<bar>bd!<CR>
 
 " allows easy access to the plus buffer
 nnoremap <leader><leader> "+
@@ -544,7 +541,7 @@ nnoremap g<tab> :bprev<cr>
 nnoremap <silent><expr> <Leader>h (&hls && v:hlsearch ? ':nohls' : ':set hls')."\n"
 
 " easier text replacement
-nnoremap <leader>s :%s///gc<left><left><left><left>
+nnoremap <leader>s :%s/\v//gc<left><left><left><left>
 
 " allows newlines to be added in normal mode, while staying in normal mode
 nnoremap <leader>o mqo<esc>`q
@@ -628,9 +625,20 @@ command! -nargs=+ FindFile call FindFiles(<f-args>)
 "}}}
 
 "Plugin Settings {{{
+"Man.vim{{{
+" allows unix man pages to be read within vim (on unix system)
+" additionally <s-k> can be used to search up a term by going outside
+" of vim
+runtime ftplugin/man.vim
+"}}}
 "Netrw{{{
 " starts netrw without the banner by default
 let g:netrw_banner=0
+
+" cause Netrw buffers to be closable
+augroup Netrw
+    autocmd FileType netrw setl bufhidden=wipe
+augroup END
 "}}}
 "Syntastic {{{2
 set statusline+=%#warningmsg#
@@ -653,19 +661,23 @@ nnoremap <C-w>e :SyntasticCheck<CR>
 " resets (hides)
 nnoremap <leader><C-w>e :SyntasticReset<CR>
 "}}}2
+"NERDTree{{{
+" open and close nerdtree on demand
+nnoremap <c-w>\ :NERDTreeToggle<cr>
+"}}}
 "avk.vim {{{
 " don't automatically jump to the first match
-cnoreabbrev ack Ack!
-cnoreabbrev ackf AckFile!
+"cnoreabbrev ack Ack!
+"cnoreabbrev ackf AckFile!
 "}}}
 "}}}
-"{{{------Source Custom Modules
+"{{{Source Custom Modules
 source ~/.vim/custom_modules/MyNotesFold/MyNotesFold.vim
 
 
 " pathogen
 execute pathogen#infect()
 "}}}
-"{{{ ------Source Vim Code Unique to this System
+"{{{Source Vim Code Unique to this System
 source ~/.vim/vimrc_exceptions.vim
 "}}}
