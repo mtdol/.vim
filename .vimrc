@@ -22,7 +22,7 @@ augroup debugStatements
     autocmd!
 augroup END
 
-augroup SaveFunctionality
+augroup saveFunctionality
     autocmd!
 augroup END
 
@@ -280,7 +280,7 @@ set backup
 " if you do this however, remember to clean out the directory every once
 "and a while
 
-augroup SaveFunctionality
+augroup saveFunctionality
 " NO TIMESTAMP:
 autocmd BufWritePre * let &backupext ='@'.substitute(substitute(substitute(expand('%:p:h'), '/', '%', 'g'), '\', '%', 'g'),  ':', '', 'g').'~'
 
@@ -299,9 +299,9 @@ function! SetNoBackup()
     set filetype=NoBackupTxt
 endf
 
-augroup SaveFunctionality
-    autocmd FileType text :if CheckIfNoBackup() | call SetNoBackup() | echom "Changes made in this filetype will not be backed up: nobackup has been globally set"
-    autocmd BufWritePre *.txt :if CheckIfNoBackup() | call SetNoBackup()
+augroup saveFunctionality
+    autocmd FileType text :if CheckIfNoBackup() | call SetNoBackup() | echom "Changes made in this filetype will not be backed up: nobackup has been globally set" | endif
+    autocmd BufWritePre *.txt :if CheckIfNoBackup() | call SetNoBackup() | endif
 augroup END
 
 
@@ -311,11 +311,29 @@ augroup END
 " These settings are for use in a vim gui window not terminal vim
 " Also note that "set vb t_vb=" has to be set in _gvimrc as well
 
+" the default settings for the size of the gui window
+let g:defaultGuiWindowSizeX = 32
+let g:defaultGuiWindowSizeY = 100
+" the large sizes for the gui window
+let g:largeGuiWindowSizeX = 34
+let g:largeGuiWindowSizeY = 120
+
+" the default position for the window
+let g:defaultGuiWindowPosX = 650
+let g:defaultGuiWindowPosY = 80
+" positions the window towards the left
+let g:leftGuiWindowPosX = 50
+let g:leftGuiWindowPosY = 80
+
 if has("gui_running")
     " set the display font
     set guifont=consolas:h11
     " set the size of the vim window
-    set lines=32 columns=100
+    exec "set lines=".g:defaultGuiWindowSizeX
+    exec "set columns=".g:defaultGuiWindowSizeY
+
+    " position the window to the default position
+    "exec "winpos ".g:defaultGuiWindowPosX." ".g:defaultGuiWindowPosY
 
     " turn off unnecessary gui options
     " also allows normal use of tab key in gui vim
@@ -323,6 +341,102 @@ if has("gui_running")
     set guioptions -=m
     " turn off icon menubar
     set guioptions -=T
+endif
+
+" resizes the gui window according to the given specification
+" preset -> 0:
+"   you may customize the window size by passing in an additional x and y
+"   variable
+" preset -> 1:
+"   the 'default' window size is used
+" preset -> 2:
+"   sets a large gui window
+" preset
+function! SetGuiWindowSize(preset=1, ...)
+    let x = g:defaultGuiWindowSizeX
+    let y = g:defaultGuiWindowSizeY
+    if a:preset ==# 0  
+        let x = a:1
+        let y = a:2
+    elseif a:preset ==# 2
+        let x = g:largeGuiWindowSizeX
+        let y = g:largeGuiWindowSizeY
+    endif
+
+    exec "set lines=".x
+    exec "set columns=".y
+endf
+
+if has("gui_running")
+    function! MoveGuiPositionUp(amount=30)
+        let posx=getwinposx()
+        let posy=getwinposy()
+        let posy=posy-a:amount
+        exec "winpos ".posx." ".posy
+    endf
+    function! MoveGuiPositionDown(amount=30)
+        let posx=getwinposx()
+        let posy=getwinposy()
+        let posy=posy+a:amount
+        exec "winpos ".posx." ".posy
+    endf
+    function! MoveGuiPositionLeft(amount=30)
+        let posx=getwinposx()
+        let posy=getwinposy()
+        let posx=posx-a:amount
+        exec "winpos ".posx." ".posy
+    endf
+    function! MoveGuiPositionRight(amount=30)
+        let posx=getwinposx()
+        let posy=getwinposy()
+        let posx=posx+a:amount
+        exec "winpos ".posx." ".posy
+    endf
+    " allow the user to reposition the window with these keys
+    nnoremap <silent> <pageup> :call MoveGuiPositionLeft()<cr>
+    nnoremap <silent> <pagedown> :call MoveGuiPositionDown()<cr>
+    nnoremap <silent> <home> :call MoveGuiPositionUp()<cr>
+    nnoremap <silent> <end> :call MoveGuiPositionRight()<cr>
+    nnoremap <silent> <leader><pageup> :call MoveGuiPositionLeft(300)<cr>
+    nnoremap <silent> <leader><pagedown> :call MoveGuiPositionDown(300)<cr>
+    nnoremap <silent> <leader><home> :call MoveGuiPositionUp(300)<cr>
+    nnoremap <silent> <leader><end> :call MoveGuiPositionRight(300)<cr>
+
+    
+    function! DecreaseGuiCols(amount=3)
+        let nlines = &lines
+        let ncolumns = &columns
+        let ncolumns=ncolumns-a:amount
+        exec "set lines=".nlines." columns=".ncolumns
+    endf
+    
+    function! DecreaseGuiLines(amount=3)
+        let nlines = &lines
+        let ncolumns = &columns
+        let nlines=nlines-a:amount
+        exec "set lines=".nlines." columns=".ncolumns
+    endf
+    
+    function! IncreaseGuiLines(amount=3)
+        let nlines = &lines
+        let ncolumns = &columns
+        let nlines=nlines+a:amount
+        exec "set lines=".nlines." columns=".ncolumns
+    endf
+    
+    function! IncreaseGuiCols(amount=3)
+        let nlines = &lines
+        let ncolumns = &columns
+        let ncolumns=ncolumns+a:amount
+        exec "set lines=".nlines." columns=".ncolumns
+    endf
+    " allow the user to change the size of the window with these keys
+    " in insert mode
+    inoremap <silent> <pageup> <esc><right>:call DecreaseGuiCols()<cr>i
+    inoremap <silent> <pagedown> <esc><right>:call DecreaseGuiLines()<cr>i
+    inoremap <silent> <home> <esc><right>:call IncreaseGuiLines()<cr>i
+    inoremap <silent> <end> <esc><right>:call IncreaseGuiCols()<cr>i
+    
 endif
 
 "}}}
@@ -379,25 +493,60 @@ nnoremap <F3> :call ToggleTabHighlighting()<cr>
 " NOTE: that this list must be updated as new custom functions are added to
 " this vimrc
 function! DisplayCustomFunctions()
-    echom "1: DisplayTabSettings"
-    echom "2: DrawScreenMyWay"
-    echom "3: RunMyNotesFold"
+    echom "1: DrawScreenMyWay"
+    echom "2: SetGuiWindowSize"
+    echom "3: DisplayTabSettings"
     echom "4: SetTabFunctionality"
-    echom "5: ToggleTabHighlighting"
+    echom "5: RunMyNotesFold"
     echom ""
 endf
-" allow easy number selection
+
+" allow easy number selection and displays some advice about the selected
+" function
 function! SelectCustomFunctions(choice)
     if a:choice ==# 1
-        let res = 'DisplayTabSettings'
-    elseif a:choice ==# 2
+        echom "DrawScreenMyWay(color=g:color)"
+        echom "Description: Draws the screen using settings particular to this vim configuration"
+        echom "Params:"
+        echom "    color: The color to set the screen"
+        echom ""
+
         let res = 'DrawScreenMyWay'
+    elseif a:choice ==# 2
+        echom "SetGuiWindowSize(preset=1, ...x, y)"
+        echom "Description: Sets the size of the vim Gui"
+        echom "Params:"
+        echom "    preset:"
+        echom "        preset -> 1: default"
+        echom "        preset -> 2: large"
+        echom "        preset -> 0: custom, pass in an additional x and y for screen size"
+        echom "    x: The number of rows to include in the gui"
+        echom "    y: The number of columns to include in the gui"
+        echom ""
+
+        let res = 'SetGuiWindowSize'
     elseif a:choice ==# 3
-        let res = 'RunMyNotesFold'
+        echom "DisplayTabSettings()"
+        echom "Description: Displays the settings currently used by vim's tab system"
+        echom ""
+
+        let res = 'DisplayTabSettings'
     elseif a:choice ==# 4
+        echom "SetTabFunctionality(...TabVal, ExpandTab, HardTabVal)"
+        echom "Description: Allows tab functionality to be changed locally (buffer) on the fly"
+        echom "Params:"
+        echom "    TabVal"
+        echom "    ExpandTab"
+        echom "    HardTabVal"
+        echom ""
+
         let res = 'SetTabFunctionality'
     elseif a:choice ==# 5
-        let res = 'ToggleTabHighlighting'
+        echom "RunMyNotesFold()"
+        echom "Description: Sets up the current buffer for MyNotes style folding and syntax highlighting"
+        echom ""
+
+        let res = 'RunMyNotesFold'
     endif
     let res = res.'()'
     call feedkeys(':call '.res."\<left>")
@@ -644,13 +793,13 @@ command! -nargs=+ FindFile call FindFiles(<f-args>)
 "}}}
 
 "Plugin Settings {{{
-"Man.vim{{{
+"Man.vim{{{2
 " allows unix man pages to be read within vim (on unix system)
 " additionally <s-k> can be used to search up a term by going outside
 " of vim
 runtime ftplugin/man.vim
-"}}}
-"Netrw{{{
+"}}}2
+"Netrw{{{2
 " starts netrw without the banner by default
 let g:netrw_banner=0
 
@@ -659,7 +808,7 @@ augroup Netrw
     autocmd!
     autocmd FileType netrw setl bufhidden=wipe
 augroup END
-"}}}
+"}}}2
 "Syntastic {{{2
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
@@ -681,25 +830,27 @@ nnoremap <C-w>e :SyntasticCheck<CR>
 " resets (hides)
 nnoremap <leader><C-w>e :SyntasticReset<CR>
 "}}}2
-"NERDTree{{{
+"NERDTree{{{2
 " open and close nerdtree on demand
 nnoremap <c-w>\ :NERDTreeToggle<cr>
-"}}}
-"avk.vim {{{
+"}}}2
+"avk.vim {{{2
 " don't automatically jump to the first match
 "cnoreabbrev ack Ack!
 "cnoreabbrev ackf AckFile!
-"}}}
-"vim-multiple-cursors{{{
+"}}}2
+"vim-multiple-cursors{{{2
 "allow easy use of the MultipleCursorsFind function
 nnoremap <leader><c-n> :MultipleCursorsFind<space>
+"}}}2
+"Pathogen{{{2
+execute pathogen#infect()
+"}}}2
 "}}}
 "{{{Source Custom Modules
 source ~/.vim/custom_modules/MyNotesFold/MyNotesFold.vim
 
 
-" pathogen
-execute pathogen#infect()
 "}}}
 "{{{Source Vim Code Unique to this System
 source ~/.vim/vimrc_exceptions.vim

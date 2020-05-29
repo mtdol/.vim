@@ -80,5 +80,5 @@ function! ApplyMyNotesOptimizations()
 endf
 
 augroup MyNotesFold
-    autocmd FileType text :if CheckIfMyNotes() | call RunMyNotesFold() | call ApplyMyNotesOptimizations()
+    autocmd FileType text :if CheckIfMyNotes() | call RunMyNotesFold() | call ApplyMyNotesOptimizations() | endif
 augroup END
