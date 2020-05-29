@@ -61,7 +61,7 @@ function! RunMyNotesFold(intensive = 1)
 endf
 
 function! CheckIfMyNotes()
-    return getline(1)=~'\v\s*!MyNotes\s*'
+    return getline(1)=~'\v\C^\s*!MyNotes\s*$'
 endf
 
 

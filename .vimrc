@@ -22,7 +22,7 @@ augroup debugStatements
     autocmd!
 augroup END
 
-augroup Netrw
+augroup SaveFunctionality
     autocmd!
 augroup END
 
@@ -280,11 +280,30 @@ set backup
 " if you do this however, remember to clean out the directory every once
 "and a while
 
+augroup SaveFunctionality
 " NO TIMESTAMP:
 autocmd BufWritePre * let &backupext ='@'.substitute(substitute(substitute(expand('%:p:h'), '/', '%', 'g'), '\', '%', 'g'),  ':', '', 'g').'~'
 
 " TIMESTAMP:
 " autocmd BufWritePre * let &backupext ='@'.substitute(substitute(substitute(expand('%:p:h'), '/', '%', 'g'), '\', '%', 'g'),  ':', '', 'g').'%%'.strftime("%Y-%m-%d-%H.%M.%S").'~'
+augroup END
+
+" don't back or save undo info for text files that start with !NoBackup
+function! CheckIfNoBackup()
+    return getline(1)=~'\v\C^\s*!NoBackup\s*$'
+endf
+
+function! SetNoBackup()
+    setl nobackup
+    setl noundofile
+    set filetype=NoBackupTxt
+endf
+
+augroup SaveFunctionality
+    autocmd FileType text :if CheckIfNoBackup() | call SetNoBackup() | echom "Changes made in this filetype will not be backed up: nobackup has been globally set"
+    autocmd BufWritePre *.txt :if CheckIfNoBackup() | call SetNoBackup()
+augroup END
+
 
 "}}}
 "Gui Functionality -----{{{
@@ -637,6 +656,7 @@ let g:netrw_banner=0
 
 " cause Netrw buffers to be closable
 augroup Netrw
+    autocmd!
     autocmd FileType netrw setl bufhidden=wipe
 augroup END
 "}}}
@@ -670,6 +690,9 @@ nnoremap <c-w>\ :NERDTreeToggle<cr>
 "cnoreabbrev ack Ack!
 "cnoreabbrev ackf AckFile!
 "}}}
+"vim-multiple-cursors{{{
+"allow easy use of the MultipleCursorsFind function
+nnoremap <leader><c-n> :MultipleCursorsFind<space>
 "}}}
 "{{{Source Custom Modules
 source ~/.vim/custom_modules/MyNotesFold/MyNotesFold.vim
