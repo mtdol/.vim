@@ -26,6 +26,9 @@ augroup saveFunctionality
     autocmd!
 augroup END
 
+augroup GuiSettings
+    autocmd!
+augroup END
 
 "}}}
 "Sanity Settings -----{{{
@@ -311,38 +314,41 @@ augroup END
 " These settings are for use in a vim gui window not terminal vim
 " Also note that "set vb t_vb=" has to be set in _gvimrc as well
 
+if has("gui_running")
+
+" Basic Gui Settings{{{2
 " the default settings for the size of the gui window
 let g:defaultGuiWindowSizeX = 32
 let g:defaultGuiWindowSizeY = 100
 " the large sizes for the gui window
-let g:largeGuiWindowSizeX = 34
-let g:largeGuiWindowSizeY = 120
+let g:largeGuiWindowSizeX = 36
+let g:largeGuiWindowSizeY = 125
 
 " the default position for the window
-let g:defaultGuiWindowPosX = 650
-let g:defaultGuiWindowPosY = 80
-" positions the window towards the left
-let g:leftGuiWindowPosX = 50
-let g:leftGuiWindowPosY = 80
+let g:defaultGuiWindowPositionX = 54
+let g:defaultGuiWindowPositionY = 109
 
-if has("gui_running")
-    " set the display font
-    set guifont=consolas:h11
-    " set the size of the vim window
-    exec "set lines=".g:defaultGuiWindowSizeX
-    exec "set columns=".g:defaultGuiWindowSizeY
+" set the display font
+set guifont=consolas:h11
 
-    " position the window to the default position
-    "exec "winpos ".g:defaultGuiWindowPosX." ".g:defaultGuiWindowPosY
+" set the size of the vim window only at startup
+augroup GuiSettings
+autocmd GuiEnter * exec "set lines=".g:defaultGuiWindowSizeX | 
+                \ exec "set columns=".g:defaultGuiWindowSizeY |
+                \ let g:hasGuiWindowBeenResized = 1 | 
+                \ exec "winpos ".g:defaultGuiWindowPositionX." "
+                \ .g:defaultGuiWindowPositionY
+augroup END
+" position the window to the default position
 
-    " turn off unnecessary gui options
-    " also allows normal use of tab key in gui vim
-    " turn off menubar
-    set guioptions -=m
-    " turn off icon menubar
-    set guioptions -=T
-endif
-
+" turn off unnecessary gui options
+" also allows normal use of tab key in gui vim
+" turn off menubar
+set guioptions -=m
+" turn off icon menubar
+set guioptions -=T
+"}}}2
+" Resize Window Function{{{2
 " resizes the gui window according to the given specification
 " preset -> 0:
 "   you may customize the window size by passing in an additional x and y
@@ -366,77 +372,114 @@ function! SetGuiWindowSize(preset=1, ...)
     exec "set lines=".x
     exec "set columns=".y
 endf
+"}}}2
+" Set Window Position with Mapping{{{2
+function! MoveGuiPositionUp(amount=30)
+    let posx=getwinposx()
+    let posy=getwinposy()
+    let posy=posy-a:amount
+    exec "winpos ".posx." ".posy
+endf
+function! MoveGuiPositionDown(amount=30)
+    let posx=getwinposx()
+    let posy=getwinposy()
+    let posy=posy+a:amount
+    exec "winpos ".posx." ".posy
+endf
+function! MoveGuiPositionLeft(amount=30)
+    let posx=getwinposx()
+    let posy=getwinposy()
+    let posx=posx-a:amount
+    exec "winpos ".posx." ".posy
+endf
+function! MoveGuiPositionRight(amount=30)
+    let posx=getwinposx()
+    let posy=getwinposy()
+    let posx=posx+a:amount
+    exec "winpos ".posx." ".posy
+endf
+" allow the user to reposition the window with these keys
+nnoremap <silent> <pageup> :call MoveGuiPositionLeft()<cr>
+nnoremap <silent> <pagedown> :call MoveGuiPositionDown()<cr>
+nnoremap <silent> <home> :call MoveGuiPositionUp()<cr>
+nnoremap <silent> <end> :call MoveGuiPositionRight()<cr>
+nnoremap <silent> g<pageup> :call MoveGuiPositionLeft(300)<cr>
+nnoremap <silent> g<pagedown> :call MoveGuiPositionDown(300)<cr>
+nnoremap <silent> g<home> :call MoveGuiPositionUp(300)<cr>
+nnoremap <silent> g<end> :call MoveGuiPositionRight(300)<cr>
+"}}}2
+" Set Window Size With Mappings{{{2
+function! DecreaseGuiCols(amount=3)
+    let nlines = &lines
+    let ncolumns = &columns
+    let ncolumns=ncolumns-a:amount
+    exec "set lines=".nlines." columns=".ncolumns
+endf
 
-if has("gui_running")
-    function! MoveGuiPositionUp(amount=30)
-        let posx=getwinposx()
-        let posy=getwinposy()
-        let posy=posy-a:amount
-        exec "winpos ".posx." ".posy
-    endf
-    function! MoveGuiPositionDown(amount=30)
-        let posx=getwinposx()
-        let posy=getwinposy()
-        let posy=posy+a:amount
-        exec "winpos ".posx." ".posy
-    endf
-    function! MoveGuiPositionLeft(amount=30)
-        let posx=getwinposx()
-        let posy=getwinposy()
-        let posx=posx-a:amount
-        exec "winpos ".posx." ".posy
-    endf
-    function! MoveGuiPositionRight(amount=30)
-        let posx=getwinposx()
-        let posy=getwinposy()
-        let posx=posx+a:amount
-        exec "winpos ".posx." ".posy
-    endf
-    " allow the user to reposition the window with these keys
-    nnoremap <silent> <pageup> :call MoveGuiPositionLeft()<cr>
-    nnoremap <silent> <pagedown> :call MoveGuiPositionDown()<cr>
-    nnoremap <silent> <home> :call MoveGuiPositionUp()<cr>
-    nnoremap <silent> <end> :call MoveGuiPositionRight()<cr>
-    nnoremap <silent> <leader><pageup> :call MoveGuiPositionLeft(300)<cr>
-    nnoremap <silent> <leader><pagedown> :call MoveGuiPositionDown(300)<cr>
-    nnoremap <silent> <leader><home> :call MoveGuiPositionUp(300)<cr>
-    nnoremap <silent> <leader><end> :call MoveGuiPositionRight(300)<cr>
+function! DecreaseGuiLines(amount=3)
+    let nlines = &lines
+    let ncolumns = &columns
+    let nlines=nlines-a:amount
+    exec "set lines=".nlines." columns=".ncolumns
+endf
 
-    
-    function! DecreaseGuiCols(amount=3)
-        let nlines = &lines
-        let ncolumns = &columns
-        let ncolumns=ncolumns-a:amount
-        exec "set lines=".nlines." columns=".ncolumns
-    endf
-    
-    function! DecreaseGuiLines(amount=3)
-        let nlines = &lines
-        let ncolumns = &columns
-        let nlines=nlines-a:amount
-        exec "set lines=".nlines." columns=".ncolumns
-    endf
-    
-    function! IncreaseGuiLines(amount=3)
-        let nlines = &lines
-        let ncolumns = &columns
-        let nlines=nlines+a:amount
-        exec "set lines=".nlines." columns=".ncolumns
-    endf
-    
-    function! IncreaseGuiCols(amount=3)
-        let nlines = &lines
-        let ncolumns = &columns
-        let ncolumns=ncolumns+a:amount
-        exec "set lines=".nlines." columns=".ncolumns
-    endf
-    " allow the user to change the size of the window with these keys
-    " in insert mode
-    inoremap <silent> <pageup> <esc><right>:call DecreaseGuiCols()<cr>i
-    inoremap <silent> <pagedown> <esc><right>:call DecreaseGuiLines()<cr>i
-    inoremap <silent> <home> <esc><right>:call IncreaseGuiLines()<cr>i
-    inoremap <silent> <end> <esc><right>:call IncreaseGuiCols()<cr>i
-    
+function! IncreaseGuiLines(amount=3)
+    let nlines = &lines
+    let ncolumns = &columns
+    let nlines=nlines+a:amount
+    exec "set lines=".nlines." columns=".ncolumns
+endf
+
+function! IncreaseGuiCols(amount=3)
+    let nlines = &lines
+    let ncolumns = &columns
+    let ncolumns=ncolumns+a:amount
+    exec "set lines=".nlines." columns=".ncolumns
+endf
+" allow the user to change the size of the window with these keys
+" in insert mode
+inoremap <silent> <pageup> <esc>:call DecreaseGuiCols()<cr>a
+inoremap <silent> <pagedown> <esc>:call DecreaseGuiLines()<cr>a
+inoremap <silent> <home> <esc>:call IncreaseGuiLines()<cr>a
+inoremap <silent> <end> <esc>:call IncreaseGuiCols()<cr>a
+"}}}2
+"Cache Window Size{{{2
+" these are used to save a certain window size for later reuse
+let g:cachedWindowSizeX = g:defaultGuiWindowSizeX
+let g:cachedWindowSizeY = g:defaultGuiWindowSizeY
+
+function! SetCachedWindowSize()
+    let g:cachedWindowSizeX = &lines
+    let g:cachedWindowSizeY = &columns
+endf
+
+nnoremap <leader>g<pageup> :call SetCachedWindowSize()<cr>
+
+function! ResetToCachedWindowSize()
+    exec "set lines=".g:cachedWindowSizeX." columns=".g:cachedWindowSizeY
+endf
+
+nnoremap <leader>g<pagedown> :call ResetToCachedWindowSize()<cr>
+"}}}2
+" Cache Window Position{{{2
+" these are used to save a certain window position for later reuse
+let g:cachedWindowPositionX = g:defaultGuiWindowPositionX
+let g:cachedWindowPositiolnY = g:defaultGuiWindowPositionY
+
+function! SetCachedWindowPosition()
+    let g:cachedWindowPositionX = getwinposx()
+    let g:cachedWindowPositionY = getwinposy()
+endf
+
+nnoremap <leader>g<home> :call SetCachedWindowPosition()<cr>
+
+function! ResetToCachedWindowPosition()
+    exec "winpos ".g:cachedWindowPositionX." ".g:cachedWindowPositionY
+endf
+
+nnoremap <leader>g<end> :call ResetToCachedWindowPosition()<cr>
+"}}}2
+
 endif
 
 "}}}
@@ -696,10 +739,11 @@ nnoremap <leader><leader> "+
 vnoremap <leader><leader> "+
 
 " cycle through buffers
-nnoremap <tab> :bnext<cr>
-nnoremap <s-tab> :bprev<cr>
-" alternative version
-nnoremap g<tab> :bprev<cr>
+nnoremap gb :bnext<cr>
+nnoremap gB :bprev<cr>
+
+" begin inserting at the start of a visual area
+vnoremap I <esc>`<i
 
 " allow the clearing of a previous search's highlighting
 "nnoremap <leader>h :noh<cr> 
@@ -730,12 +774,9 @@ vnoremap <leader>' <esc>`>a'<esc>`<i'<esc>`><right><right>
 vnoremap <leader>( <esc>`>a)<esc>`<i(<esc>`><right><right>
 vnoremap <leader>) <esc>`>a)<esc>`<i(<esc>`><right><right>
 
-" uses s(for i) and S(for a) to insert a single character at the cursor
-function! RepeatChar(char, count)
-  return repeat(a:char, a:count)
-endf
-nnoremap s :<c-u>exec "normal i".RepeatChar(nr2char(getchar()), v:count1)<cr>
-nnoremap S :<c-u>exec "normal a".RepeatChar(nr2char(getchar()), v:count1)<cr>
+" repeats the char pressed after the s command v:count1 times
+nnoremap <silent> s :<c-u>exec "normal i".repeat(nr2char(getchar()), v:count1)<cr>
+nnoremap <silent> S :<c-u>exec "normal a".repeat(nr2char(getchar()), v:count1)<cr>
 
 " inserts braces while in insert mode
 inoremap <c-b>b <esc>$a<space>{<cr>}<esc>O<tab>
@@ -832,6 +873,7 @@ nnoremap <leader><C-w>e :SyntasticReset<CR>
 "}}}2
 "NERDTree{{{2
 " open and close nerdtree on demand
+nnoremap <c-w><c-\> :NERDTreeToggle<cr>
 nnoremap <c-w>\ :NERDTreeToggle<cr>
 "}}}2
 "avk.vim {{{2
@@ -842,6 +884,27 @@ nnoremap <c-w>\ :NERDTreeToggle<cr>
 "vim-multiple-cursors{{{2
 "allow easy use of the MultipleCursorsFind function
 nnoremap <leader><c-n> :MultipleCursorsFind<space>
+"}}}2
+"buffergator{{{2
+" causes the window not to expand when the plugin is opened
+let g:buffergator_autoexpand_on_split=0
+
+" sort by most recently used
+let g:buffergator_sort_regime="mru"
+
+" display files with their parent directory
+let g:buffergator_display_regime="parentdir"
+
+" keeps the plugin from remapping keys on its own
+let g:buffergator_suppress_keymaps=1
+
+" now provide our own mappings
+nnoremap <leader>b :BuffergatorOpen<cr>
+nnoremap <leader>B :BuffergatorClose<cr>
+nnoremap <leader>t :BuffergatorTabsOpen<cr>
+nnoremap <leader>T :BuffergatorTabsClose<cr>
+nnoremap ]b :bnext<cr>
+nnoremap [b :bprev<cr>
 "}}}2
 "Pathogen{{{2
 execute pathogen#infect()
