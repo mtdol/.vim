@@ -2,7 +2,9 @@
 "THESE ARE MY CUSTOM VIM EDITS
 "================================
 
-"Clear Existing Autogroups -----{{{
+"Clear Existing Autogroups and Reset Defaults -----{{{
+" resets every global mapping to its default
+mapclear
 
 " this is to avoid importing the same autocommands over and over
 " again when this vimrc is reloaded
@@ -374,13 +376,13 @@ function! SetGuiWindowSize(preset=1, ...)
 endf
 "}}}2
 " Set Window Position with Mapping{{{2
-function! MoveGuiPositionUp(amount=30)
+function! MoveGuiPositionUp(amount=15)
     let posx=getwinposx()
     let posy=getwinposy()
     let posy=posy-a:amount
     exec "winpos ".posx." ".posy
 endf
-function! MoveGuiPositionDown(amount=30)
+function! MoveGuiPositionDown(amount=15)
     let posx=getwinposx()
     let posy=getwinposy()
     let posy=posy+a:amount
@@ -403,10 +405,10 @@ nnoremap <silent> <pageup> :call MoveGuiPositionLeft()<cr>
 nnoremap <silent> <pagedown> :call MoveGuiPositionDown()<cr>
 nnoremap <silent> <home> :call MoveGuiPositionUp()<cr>
 nnoremap <silent> <end> :call MoveGuiPositionRight()<cr>
-nnoremap <silent> g<pageup> :call MoveGuiPositionLeft(300)<cr>
-nnoremap <silent> g<pagedown> :call MoveGuiPositionDown(300)<cr>
-nnoremap <silent> g<home> :call MoveGuiPositionUp(300)<cr>
-nnoremap <silent> g<end> :call MoveGuiPositionRight(300)<cr>
+nnoremap <silent> <s-pageup> :call MoveGuiPositionLeft(150)<cr>
+nnoremap <silent> <s-pagedown> :call MoveGuiPositionDown(50)<cr>
+nnoremap <silent> <s-home> :call MoveGuiPositionUp(50)<cr>
+nnoremap <silent> <s-end> :call MoveGuiPositionRight(150)<cr>
 "}}}2
 " Set Window Size With Mappings{{{2
 function! DecreaseGuiCols(amount=3)
@@ -438,10 +440,10 @@ function! IncreaseGuiCols(amount=3)
 endf
 " allow the user to change the size of the window with these keys
 " in insert mode
-inoremap <silent> <pageup> <esc>:call DecreaseGuiCols()<cr>a
-inoremap <silent> <pagedown> <esc>:call DecreaseGuiLines()<cr>a
-inoremap <silent> <home> <esc>:call IncreaseGuiLines()<cr>a
-inoremap <silent> <end> <esc>:call IncreaseGuiCols()<cr>a
+nnoremap <silent> <m-pageup> :call DecreaseGuiCols()<cr>
+nnoremap <silent> <m-pagedown> :call DecreaseGuiLines()<cr>
+nnoremap <silent> <m-home> :call IncreaseGuiLines()<cr>
+nnoremap <silent> <m-end> :call IncreaseGuiCols()<cr>
 "}}}2
 "Cache Window Size{{{2
 " these are used to save a certain window size for later reuse
@@ -453,13 +455,13 @@ function! SetCachedWindowSize()
     let g:cachedWindowSizeY = &columns
 endf
 
-nnoremap <leader>g<pageup> :call SetCachedWindowSize()<cr>
+nnoremap g<pageup> :call SetCachedWindowSize()<cr>
 
 function! ResetToCachedWindowSize()
     exec "set lines=".g:cachedWindowSizeX." columns=".g:cachedWindowSizeY
 endf
 
-nnoremap <leader>g<pagedown> :call ResetToCachedWindowSize()<cr>
+nnoremap <silent> g<pagedown> :call ResetToCachedWindowSize()<cr>
 "}}}2
 " Cache Window Position{{{2
 " these are used to save a certain window position for later reuse
@@ -471,18 +473,37 @@ function! SetCachedWindowPosition()
     let g:cachedWindowPositionY = getwinposy()
 endf
 
-nnoremap <leader>g<home> :call SetCachedWindowPosition()<cr>
+nnoremap g<home> :call SetCachedWindowPosition()<cr>
 
 function! ResetToCachedWindowPosition()
     exec "winpos ".g:cachedWindowPositionX." ".g:cachedWindowPositionY
 endf
 
-nnoremap <leader>g<end> :call ResetToCachedWindowPosition()<cr>
+nnoremap <silent> g<end> :call ResetToCachedWindowPosition()<cr>
 "}}}2
 
 endif
 
 "}}}
+" Windowing{{{
+" Allows a window to be created rightbelow when the shift key is pressed
+nnoremap <silent> <c-w>S :rightbelow split<cr>
+nnoremap <silent> <c-w>V :rightbelow vsplit<cr>
+
+" allow the arrow keys to create new windows
+nnoremap <silent> <c-w><left> :leftabove vsplit<cr>
+nnoremap <silent> <c-w><c-left> :leftabove vsplit<cr>
+nnoremap <silent> <c-w><right> :rightbelow vsplit<cr>
+nnoremap <silent> <c-w><c-right> :rightbelow vsplit<cr>
+nnoremap <silent> <c-w><c-up> :leftabove split<cr>
+nnoremap <silent> <c-w><c-down> :rightbelow split<cr>
+
+" allow easy window resizing
+nnoremap <silent> <m-=> :resize +2<cr>
+nnoremap <silent> <m--> :resize -2<cr>
+nnoremap <silent> <m-.> :vertical resize -2<cr>
+nnoremap <silent> <m-,> :vertical resize +2<cr>
+" }}}
 "Macros -----{{{
 "Key readjustments -----{{{2
 
