@@ -7,3 +7,6 @@
 [submodule "bundle/vim-multiple-cursors"]
 	path = bundle/vim-multiple-cursors
 	url = https://github.com/terryma/vim-multiple-cursors
+[submodule "bundle/vim-buffergator"]
+	path = bundle/vim-buffergator
+	url = https://github.com/jeetsukumaran/vim-buffergator
