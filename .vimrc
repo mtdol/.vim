@@ -495,7 +495,9 @@ nnoremap <silent> <c-w><left> :leftabove vsplit<cr>
 nnoremap <silent> <c-w><c-left> :leftabove vsplit<cr>
 nnoremap <silent> <c-w><right> :rightbelow vsplit<cr>
 nnoremap <silent> <c-w><c-right> :rightbelow vsplit<cr>
+nnoremap <silent> <c-w><up> :leftabove split<cr>
 nnoremap <silent> <c-w><c-up> :leftabove split<cr>
+nnoremap <silent> <c-w><down> :rightbelow split<cr>
 nnoremap <silent> <c-w><c-down> :rightbelow split<cr>
 
 " allow easy window resizing
