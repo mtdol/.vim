@@ -10,3 +10,9 @@
 [submodule "bundle/nerdcommenter"]
 	path = bundle/nerdcommenter
 	url = https://github.com/preservim/nerdcommenter
+[submodule "bundle/vim-ctrlspace"]
+	path = bundle/vim-ctrlspace
+	url = https://github.com/vim-ctrlspace/vim-ctrlspace
+[submodule "bundle/vim-easymotion"]
+	path = bundle/vim-easymotion
+	url = https://github.com/easymotion/vim-easymotion
