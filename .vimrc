@@ -1,10 +1,10 @@
 "================================
-"THESE ARE MY CUSTOM VIM EDITS
+"THESE ARE MY CUSTOM VIM SETTINGS
 "================================
 
 "Clear Existing Autogroups and Reset Defaults -----{{{
 " resets every global mapping to its default
-mapclear
+"mapclear
 
 " this is to avoid importing the same autocommands over and over
 " again when this vimrc is reloaded
@@ -102,9 +102,8 @@ let g:guiBarColor = "#222222"
 let g:backGroundStyle = "dark"
 
 syntax on
-exec "colorscheme ".g:color
 set number
-set relativenumber
+"set relativenumber
 " faster screen
 set ttyfast
 
@@ -145,7 +144,7 @@ call DrawScreenMyWay()
 " make statusline mandatory
 set laststatus=2
 " statusline settings
-set statusline=b%n\ \ %-4l\ %-3c\ %t\ %y%m\ %3p%%\ 
+set statusline=w%{winnr()}\ \ %-4l\ %-3c\ %t\ %y%m\ %3p%%\ 
 
 " turn off the annoying beeping and flashing
 set vb t_vb=
@@ -506,7 +505,23 @@ nnoremap <silent> <m--> :resize -2<cr>
 nnoremap <silent> <m-.> :vertical resize -2<cr>
 nnoremap <silent> <m-,> :vertical resize +2<cr>
 " }}}
-"Macros -----{{{
+"Unix Settings -----{{{
+" these are settings that are intended to be used primarily on unix enviroments
+
+" find files and populate the quickfix list
+" use :FindFile <file name> <location> to call this
+fun! FindFiles(filename, loc)
+  let error_file = tempname()
+  silent exe '!find '.a:loc.' -name "'.a:filename.'" | xargs file | sed "s/:/:1:/" > '.error_file
+  set errorformat=%f:%l:%m
+  exe "cfile ". error_file
+  copen
+  call delete(error_file)
+endfun
+command! -nargs=+ FindFile call FindFiles(<f-args>)
+
+"}}}
+"Key Remapping -----{{{
 "Key readjustments -----{{{2
 
 " remap leader key
@@ -530,6 +545,9 @@ nnoremap <F1> :set relativenumber!<cr>
 
 " also allow toggling of cursor highlighting
 nnoremap <leader><F1> :set cul!<cr>
+
+" allow toggling of number display
+nnoremap -<F1> :set number!<cr>
 "}}}3
 "<F2> ---{{{3
 " allow easy toggling of spell mode
@@ -667,7 +685,7 @@ nnoremap <F12> :source $MYVIMRC<cr>
 "}}}3
 "}}}2
 "General Mappings ---{{{2
-
+"Scroll Mode {{{3
 " allows screen movement regardless of cursor in insert mode
 " makes j and k act like <c-e> and <c-y>
 " also allows h and l to scroll faster
@@ -705,6 +723,7 @@ function! ToggleScrollMode()
   endif
 endf
 nnoremap gl :call ToggleScrollMode()<cr>
+"}}}3
 
 " speedier movement
 nnoremap <c-l> w
@@ -755,7 +774,10 @@ nnoremap <leader>l :ls<cr>:b
 nnoremap <leader>w :write<cr>
 
 " allows universal closing of a buffer without closing a window
-nnoremap <leader>q :bp<bar>sp<bar>bn<bar>bd!<CR>
+nnoremap <silent> <leader>q :bp<bar>sp<bar>bn<bar>bd!<CR>
+
+" remaps _ to search a char backward (what comma usually does)
+nnoremap _ ,
 
 " allows easy access to the plus buffer
 nnoremap <leader><leader> "+
@@ -763,10 +785,12 @@ vnoremap <leader><leader> "+
 
 " cycle through buffers
 nnoremap gb :bnext<cr>
-nnoremap gB :bprev<cr>
+nnoremap <leader>gb :bprev<cr>
+nnoremap ]b :bnext<cr>
+nnoremap [b :bprev<cr>
 
-" begin inserting at the start of a visual area
-vnoremap I <esc>`<i
+" sets <c-w><c-t> to behave as :tabe %
+nnoremap <c-w><c-t> :tabe %<cr>
 
 " allow the clearing of a previous search's highlighting
 "nnoremap <leader>h :noh<cr> 
@@ -776,15 +800,34 @@ vnoremap I <esc>`<i
 nnoremap <silent><expr> <Leader>h (&hls && v:hlsearch ? ':nohls' : ':set hls')."\n"
 
 " easier text replacement
-nnoremap <leader>s :%s/\v//gc<left><left><left><left>
+nnoremap \s :%s/\v//gc<left><left><left><left>
+
+" selects the word under the cursor without jumping
+nnoremap <leader>* :keepjumps normal! mq*`q<cr>
+
+" allows the content under the cursor in visual mode to be searched
+vnoremap // y/\V<c-r>=escape(@",'/\')<cr><cr>
+" same as above but does not jump forwards
+vmap <leader>// mq//`q
+" also allows backwards search
+vnoremap ?/ y?\V<c-r>=escape(@",'/\')<cr><cr>
+
+
+" allows macros to be run on multiple lines
+xnoremap @ :<C-u>call ExecuteMacroOverVisualRange()<CR>
+function! ExecuteMacroOverVisualRange()
+  echo "@".getcmdline()
+  execute ":'<,'>normal @".nr2char(getchar())
+endfunction
+
 
 " allows newlines to be added in normal mode, while staying in normal mode
 nnoremap <leader>o mqo<esc>`q
 nnoremap <leader>O mqO<esc>`q
 
 " funtions like o, but leaves you in normal mode
-nnoremap <c-f>o o<esc>
-nnoremap <c-f>O O<esc>
+nnoremap -o o<esc>
+nnoremap -O O<esc>
 
 " adds a semicolon to end of line then returns to same spot
 nnoremap <leader>; mqA;<esc>`q
@@ -817,8 +860,8 @@ augroup debugStatements
    autocmd FileType python :inoremap <c-b>d #DEBUG<cr>#DEBUG<esc>O
 augroup END
 
-" allows the use of <c-f>w and <c-f>b to move forwards and backwards
-" in a camelCase word, also <c-f>e to go to the end of the current word
+" allows the use of -w and <c-i>b to move forwards and backwards
+" in a camelCase word, also <c-i>e to go to the end of the current word
 "
 " explanation: /> is match new word, /<Bar> is pipe for regex, /u is next
 " capital letter
@@ -826,44 +869,37 @@ augroup END
 " Bugs: using in visual mode with a backwards expanding selection
 " will not work properly.
 " Also cannot use numbers right now.
-" Also <c-f>e will not go to the end if at the end of the line
-nnoremap <silent><c-f>w :call search('\>\<Bar>\u', '')<cr>
-nnoremap <silent><c-f>b :call search('\>\<Bar>\u', 'b')<cr>
-nnoremap <silent><c-f>e <right>:call search('\>\<Bar>\u\<Bar>\$', '')<cr><left>
-onoremap <silent><c-f>w :call search('\>\<Bar>\u', '')<cr>
-onoremap <silent><c-f>b :call search('\>\<Bar>\u', 'b')<cr>
-onoremap <silent><c-f>e <right>:call search('\>\<Bar>\u', '')<cr><left>
-vnoremap <silent><c-f>w <esc>:call search('\>\<Bar>\u', '')<cr>mqv`<o
-vnoremap <silent><c-f>b <esc>:call search('\>\<Bar>\u', 'b')<cr>v`<o
-vnoremap <silent><c-f>e <esc><right>:call search('\>\<Bar>\u', '')<cr>mqv`<o<left>
+" Also <c-i>e will not go to the end if at the end of the line
+nnoremap <silent><c-i>w :call search('\>\<Bar>\u', '')<cr>
+nnoremap <silent><c-i>b :call search('\>\<Bar>\u', 'b')<cr>
+nnoremap <silent><c-i>e <right>:call search('\>\<Bar>\u\<Bar>\$', '')<cr><left>
+onoremap <silent><c-i>w :call search('\>\<Bar>\u', '')<cr>
+onoremap <silent><c-i>b :call search('\>\<Bar>\u', 'b')<cr>
+onoremap <silent><c-i>e <right>:call search('\>\<Bar>\u', '')<cr><leit>
+vnoremap <silent><c-i>w <esc>:call search('\>\<Bar>\u', '')<cr>mqv`<o
+vnoremap <silent><c-i>b <esc>:call search('\>\<Bar>\u', 'b')<cr>v`<o
+vnoremap <silent><c-i>e <esc><right>:call search('\>\<Bar>\u', '')<cr>mqv`<o<left>
 
 "}}}2
 "}}}
-"Unix Settings -----{{{
-" these are settings that are intended to be used primarily on unix enviroments
+" Macros {{{
+" Store macros according to file type
 
-" find files and populate the quickfix list
-" use :FindFile <file name> <location> to call this
-fun! FindFiles(filename, loc)
-  let error_file = tempname()
-  silent exe '!find '.a:loc.' -name "'.a:filename.'" | xargs file | sed "s/:/:1:/" > '.error_file
-  set errorformat=%f:%l:%m
-  exe "cfile ". error_file
-  copen
-  call delete(error_file)
-endfun
-command! -nargs=+ FindFile call FindFiles(<f-args>)
 
 "}}}
 
 "Plugin Settings {{{
-"Man.vim{{{2
+"source $HOME/.vim/enabled_plugins.vim
+"Pathogen {{{2
+execute pathogen#infect()
+"}}}2
+"Man.vim {{{2
 " allows unix man pages to be read within vim (on unix system)
 " additionally <s-k> can be used to search up a term by going outside
 " of vim
 runtime ftplugin/man.vim
 "}}}2
-"Netrw{{{2
+"Netrw {{{2
 " starts netrw without the banner by default
 let g:netrw_banner=0
 
@@ -894,21 +930,36 @@ nnoremap <C-w>e :SyntasticCheck<CR>
 " resets (hides)
 nnoremap <leader><C-w>e :SyntasticReset<CR>
 "}}}2
-"NERDTree{{{2
+"NERDTree {{{2
 " open and close nerdtree on demand
-nnoremap <c-w><c-\> :NERDTreeToggle<cr>
-nnoremap <c-w>\ :NERDTreeToggle<cr>
+nnoremap <silent> <c-w><c-\> :NERDTreeToggle<cr>
+nnoremap <silent> <c-w>\ :NERDTreeToggle<cr>
 "}}}2
-"avk.vim {{{2
+"ack.vim {{{2
 " don't automatically jump to the first match
 "cnoreabbrev ack Ack!
 "cnoreabbrev ackf AckFile!
 "}}}2
-"vim-multiple-cursors{{{2
-"allow easy use of the MultipleCursorsFind function
-nnoremap <leader><c-n> :MultipleCursorsFind<space>
+"vim-multiple-cursors {{{2
+""allow easy use of the MultipleCursorsFind function
+"nnoremap <leader><c-n> :MultipleCursorsFind<space>
+
+"" force manual mappings
+"let g:multi_cursor_use_default_mapping=0
+
+"let g:multi_cursor_start_word_key      = '<C-n>'
+"let g:multi_cursor_select_all_word_key = '<A-n>'
+"let g:multi_cursor_start_key           = 'g<C-n>'
+"let g:multi_cursor_select_all_key      = 'g<A-n>'
+"let g:multi_cursor_next_key            = '<C-n>'
+"let g:multi_cursor_prev_key            = '<C-p>'
+"let g:multi_cursor_skip_key            = '<C-x>'
+"let g:multi_cursor_quit_key            = '<Esc>'
+
+""reload plugin
+""source $HOME\.vim\bundle\vim-multiple-cursors\autoload\multiple_cursors.vim
 "}}}2
-"buffergator{{{2
+"buffergator {{{2
 " causes the window not to expand when the plugin is opened
 let g:buffergator_autoexpand_on_split=0
 
@@ -922,15 +973,52 @@ let g:buffergator_display_regime="parentdir"
 let g:buffergator_suppress_keymaps=1
 
 " now provide our own mappings
-nnoremap <leader>b :BuffergatorOpen<cr>
-nnoremap <leader>B :BuffergatorClose<cr>
-nnoremap <leader>t :BuffergatorTabsOpen<cr>
-nnoremap <leader>T :BuffergatorTabsClose<cr>
-nnoremap ]b :bnext<cr>
-nnoremap [b :bprev<cr>
+nnoremap <silent> <leader>b :BuffergatorToggle<cr>
+nnoremap <silent> <leader>B :BuffergatorTabsToggle<cr>
 "}}}2
-"Pathogen{{{2
-execute pathogen#infect()
+" EasyMotion {{{2
+" keep the cursor on the same line when using easymode jk
+let g:EasyMotion_startofline=0
+
+" Use capital letters when displaying locations
+" NOTE: Doesn't seem to work as of 2020/5/13
+"let g:EasyMotion_use_upper=1
+
+
+" change the prefix key used in the bindings
+map , <Plug>(easymotion-prefix)
+
+" allow ,s to be used to search only on one line
+nmap ,s <Plug>(easymotion-sl)
+xmap ,s <Plug>(easymotion-sl)
+omap ,s <Plug>(easymotion-sl)
+
+" use <leader>,s to search over the whole file without looking into other
+" windows
+nmap <leader>,f <Plug>(easymotion-s)
+xmap <leader>,f <Plug>(easymotion-s)
+omap <leader>,f <Plug>(easymotion-s)
+
+" allow overwin motions
+nmap <Leader>f <Plug>(easymotion-overwin-f)
+xmap <Leader>f <Plug>(easymotion-bd-f)
+omap <Leader>f <Plug>(easymotion-bd-f)
+
+" allow double char search
+nmap <Leader>s <Plug>(easymotion-overwin-f2)
+xmap <Leader>s <Plug>(easymotion-bd-f2)
+omap <Leader>s <Plug>(easymotion-bd-f2)
+
+" allow j and k to be used to go to the beginning and ends of lines
+map ,J <Plug>(easymotion-sol-j)
+map ,K <Plug>(easymotion-sol-k)
+map ,<c-j> <Plug>(easymotion-eol-j)
+map ,<c-k> <Plug>(easymotion-eol-k)
+
+" allow sn mapping as well
+nmap <leader><leader>s <Plug>(easymotion-sn)
+xmap <leader><leader>s <Plug>(easymotion-sn)
+omap <leader><leader>s <Plug>(easymotion-sn)
 "}}}2
 "}}}
 "{{{Source Custom Modules
@@ -940,4 +1028,5 @@ source ~/.vim/custom_modules/MyNotesFold/MyNotesFold.vim
 "}}}
 "{{{Source Vim Code Unique to this System
 source ~/.vim/vimrc_exceptions.vim
+
 "}}}
