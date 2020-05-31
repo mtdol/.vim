@@ -47,3 +47,6 @@ if (Test-Path ~\.vim\quick_locations.txt -eq $false) {
 if (Test-Path ~\.vim\vimrc_exceptions.vim -eq $false) {
     New-Item ~\.vim\vimrc_exceptions.vim
 }
+if (Test-Path ~\.vim\pre_vimrc_exceptions.vim -eq $false) {
+    New-Item ~\.vim\pre_vimrc_exceptions.vim
+}

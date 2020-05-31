@@ -2,6 +2,7 @@
 vimbackups/
 quick_locations.txt
 vimrc_exceptions.vim
+pre_vimrc_exceptions.vim
 
 # this is only needed in windows
 vimfiles/

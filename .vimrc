@@ -2,6 +2,10 @@
 "THESE ARE MY CUSTOM VIM SETTINGS
 "================================
 
+" Run Local Presets {{{
+" Source code local to this machine
+source ~/.vim/pre_vimrc_exceptions.vim
+" }}}
 "Clear Existing Autogroups and Reset Defaults -----{{{
 " resets every global mapping to its default
 "mapclear
@@ -60,12 +64,17 @@ filetype plugin indent on
 "}}}
 "Search Functionality -----{{{
 
-" makes searching work as in other regex engines
-" ie, there is no need to escape the + or | characters
-nnoremap / /\v
-vnoremap / /\v
-nnoremap ? ?\v
-vnoremap ? ?\v
+" makes all characters searched have literal value except backslash (\)
+nnoremap / /\V
+vnoremap / /\V
+nnoremap ? ?\V
+vnoremap ? ?\V
+
+nnoremap q/ q/i\V<esc>
+vnoremap q/ q/i\V<esc>
+nnoremap q? q?i\V<esc>
+vnoremap q? q?i\V<esc>
+
 
 " all searches case agnostic by default
 " equivalent to starting a search with \c
@@ -80,6 +89,30 @@ set hlsearch
 
 " do not highlight searches upon entering the file
 noh
+
+
+" allow the clearing of a previous search's highlighting
+"nnoremap <leader>h :noh<cr> 
+
+" toggles the display of search highlighting, but causes a new search
+" to re-enable highlighting
+nnoremap <silent><expr> <Leader>h (&hls && v:hlsearch ? ':nohls' : ':set hls')."\n"
+
+" easier text replacement
+nnoremap \s :%s/\V//gc<left><left><left><left>
+
+" same as above but uses "/ register for faster entry
+nnoremap <leader>\s :%s/<c-r>///gc<left><left><left>
+
+" selects the word under the cursor without jumping
+nnoremap <leader>* :keepjumps normal! mq*`q<cr>
+
+" allows the content under the cursor in visual mode to be searched
+vnoremap // y/\V<c-r>=escape(@",'/\')<cr><cr>
+" same as above but does not jump forwards
+vmap <leader>// mq//`q
+" also allows backwards search
+vnoremap ?/ y?\V<c-r>=escape(@",'/\')<cr><cr>
 "}}}
 "Encodings and Language -----{{{
 
@@ -792,25 +825,6 @@ nnoremap [b :bprev<cr>
 " sets <c-w><c-t> to behave as :tabe %
 nnoremap <c-w><c-t> :tabe %<cr>
 
-" allow the clearing of a previous search's highlighting
-"nnoremap <leader>h :noh<cr> 
-
-" toggles the display of search highlighting, but causes a new search
-" to re-enable highlighting
-nnoremap <silent><expr> <Leader>h (&hls && v:hlsearch ? ':nohls' : ':set hls')."\n"
-
-" easier text replacement
-nnoremap \s :%s/\v//gc<left><left><left><left>
-
-" selects the word under the cursor without jumping
-nnoremap <leader>* :keepjumps normal! mq*`q<cr>
-
-" allows the content under the cursor in visual mode to be searched
-vnoremap // y/\V<c-r>=escape(@",'/\')<cr><cr>
-" same as above but does not jump forwards
-vmap <leader>// mq//`q
-" also allows backwards search
-vnoremap ?/ y?\V<c-r>=escape(@",'/\')<cr><cr>
 
 
 " allows macros to be run on multiple lines
@@ -978,12 +992,14 @@ nnoremap <silent> <leader>B :BuffergatorTabsToggle<cr>
 "}}}2
 " EasyMotion {{{2
 " keep the cursor on the same line when using easymode jk
-let g:EasyMotion_startofline=0
+let g:EasyMotion_startofline = 0
 
 " Use capital letters when displaying locations
 " NOTE: Doesn't seem to work as of 2020/5/13
-"let g:EasyMotion_use_upper=1
+"let g:EasyMotion_use_upper = 1
 
+" Use smart case for searches
+let g:EasyMotion_smartcase = 1
 
 " change the prefix key used in the bindings
 map , <Plug>(easymotion-prefix)

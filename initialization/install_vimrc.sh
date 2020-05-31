@@ -53,3 +53,8 @@ if [ ! -f ~/.vim/vimrc_exceptions.vim ]
 then
 touch ~/.vim/vimrc_exceptions.vim
 fi
+
+if [ ! -f ~/.vim/pre_vimrc_exceptions.vim ]
+then
+touch ~/.vim/pre_vimrc_exceptions.vim
+fi
