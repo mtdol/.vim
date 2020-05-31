@@ -904,6 +904,12 @@ vnoremap <silent><c-i>e <esc><right>:call search('\>\<Bar>\u', '')<cr>mqv`<o<lef
 
 "Plugin Settings {{{
 "source $HOME/.vim/enabled_plugins.vim
+" Startup {{{2
+" does basic bookkeeping for plugins
+"
+" figure out which plugins are active
+source ~/.vim/plugins_available.vim
+" }}}2
 "Pathogen {{{2
 execute pathogen#infect()
 "}}}2
@@ -924,6 +930,8 @@ augroup Netrw
 augroup END
 "}}}2
 "Syntastic {{{2
+if g:Plugin_Enabled_syntastic ==# 1
+
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
@@ -943,11 +951,17 @@ let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_
 nnoremap <C-w>e :SyntasticCheck<CR>
 " resets (hides)
 nnoremap <leader><C-w>e :SyntasticReset<CR>
+
+endif
 "}}}2
 "NERDTree {{{2
+if g:Plugin_Enabled_nerdtree ==# 1
+
 " open and close nerdtree on demand
 nnoremap <silent> <c-w><c-\> :NERDTreeToggle<cr>
 nnoremap <silent> <c-w>\ :NERDTreeToggle<cr>
+
+endif
 "}}}2
 "ack.vim {{{2
 " don't automatically jump to the first match
@@ -974,6 +988,8 @@ nnoremap <silent> <c-w>\ :NERDTreeToggle<cr>
 ""source $HOME\.vim\bundle\vim-multiple-cursors\autoload\multiple_cursors.vim
 "}}}2
 "buffergator {{{2
+if g:Plugin_Enabled_vim_buffergator ==# 1
+
 " causes the window not to expand when the plugin is opened
 let g:buffergator_autoexpand_on_split=0
 
@@ -989,8 +1005,12 @@ let g:buffergator_suppress_keymaps=1
 " now provide our own mappings
 nnoremap <silent> <leader>b :BuffergatorToggle<cr>
 nnoremap <silent> <leader>B :BuffergatorTabsToggle<cr>
+
+endif
 "}}}2
 " EasyMotion {{{2
+if g:Plugin_Enabled_vim_easymotion ==# 1
+
 " keep the cursor on the same line when using easymode jk
 let g:EasyMotion_startofline = 0
 
@@ -1035,7 +1055,19 @@ map ,<c-k> <Plug>(easymotion-eol-k)
 nmap <leader><leader>s <Plug>(easymotion-sn)
 xmap <leader><leader>s <Plug>(easymotion-sn)
 omap <leader><leader>s <Plug>(easymotion-sn)
+
+endif
 "}}}2
+" NerdCommenter {{{2
+if g:Plugin_Enabled_nerdcommenter ==# 1
+
+endif
+" }}}2
+" CtrlSpace {{{2
+if g:Plugin_Enabled_vim_ctrlspace ==# 1
+
+endif
+" }}}2
 "}}}
 "{{{Source Custom Modules
 source ~/.vim/custom_modules/MyNotesFold/MyNotesFold.vim
