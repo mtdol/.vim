@@ -57,6 +57,9 @@ set nomodeline
 " don't delete buffers from buffer list when their windows are closed
 set hidden
 
+" keep vim from "helpfully" inserting newlines into your text
+set formatoptions-=tc
+
 " This loads the file "ftplugin.vim" in 'runtimepath'.
 filetype plugin indent on
 
@@ -69,12 +72,6 @@ nnoremap / /\V
 vnoremap / /\V
 nnoremap ? ?\V
 vnoremap ? ?\V
-
-nnoremap q/ q/i\V<esc>
-vnoremap q/ q/i\V<esc>
-nnoremap q? q?i\V<esc>
-vnoremap q? q?i\V<esc>
-
 
 " all searches case agnostic by default
 " equivalent to starting a search with \c
@@ -145,7 +142,7 @@ set wrap
 
 
 " draws the screen in my prefered format
-function! DrawScreenMyWay(...)
+func! DrawScreenMyWay(...)
     let g:color = a:0 >= 1 ? a:1 : g:color
     " the second argument will either be the console color or the gui color
     " depending on whether console or gui vim is running
@@ -168,7 +165,7 @@ function! DrawScreenMyWay(...)
     let background = g:backGroundStyle
     " using this color; change ctermbg to change the color of the highlight"
     exec "highlight ColorColumn ctermbg=".g:barColor." guibg=".g:guiBarColor
-endf
+endfunc
 
 call DrawScreenMyWay()
 
@@ -217,7 +214,7 @@ set autoindent
 
 
 "allows tab functionality to be changed locally (buffer) on the fly
-function! SetTabFunctionality(...)
+func! SetTabFunctionality(...)
     let tabVal = a:0 >= 1 ? a:1 : 4
     let expandTab = a:0 >= 2 ? a:1 : 1
     let hardTabVal = a:0 >= 3 ? a:1 : 8
@@ -233,31 +230,31 @@ function! SetTabFunctionality(...)
         setlocal noexpandtab
         let &l:shiftwidth=tabVal
     endif
-endf
+endfunc
 
 "Displays the values of the most important indentation variables for the
 "current buffer
-function! DisplayTabSettings()
+func! DisplayTabSettings()
     exec 'echo "expandtab:"'.&l:expandtab
     exec 'echo "tabstop:"'.&l:tabstop
     exec 'echo "softtabstop:"'.&l:softtabstop
     exec 'echo "shiftwidth:"'.&l:shiftwidth
     exec 'echo "smarttab:"'.&l:smarttab
-endf
+endfunc
 
 "}}}
 "Folding -----{{{
 "Special folding functions ---{{{2
 
 
-function! MarkdownLevel()
+func! MarkdownLevel()
     let h = matchstr(getline(v:lnum), '^#\+')
     if empty(h)
         return "=" 
     else
         return ">" . len(h)
     endif
-endf
+endfunc
 
 "}}}2
 "General Folding ---{{{2
@@ -326,15 +323,15 @@ autocmd BufWritePre * let &backupext ='@'.substitute(substitute(substitute(expan
 augroup END
 
 " don't back or save undo info for text files that start with !NoBackup
-function! CheckIfNoBackup()
+func! CheckIfNoBackup()
     return getline(1)=~'\v\C^\s*!NoBackup\s*$'
-endf
+endfunc
 
-function! SetNoBackup()
+func! SetNoBackup()
     setl nobackup
     setl noundofile
     set filetype=NoBackupTxt
-endf
+endfunc
 
 augroup saveFunctionality
     autocmd FileType text :if CheckIfNoBackup() | call SetNoBackup() | echom "Changes made in this filetype will not be backed up: nobackup has been globally set" | endif
@@ -392,7 +389,7 @@ set guioptions -=T
 " preset -> 2:
 "   sets a large gui window
 " preset
-function! SetGuiWindowSize(preset=1, ...)
+func! SetGuiWindowSize(preset=1, ...)
     let x = g:defaultGuiWindowSizeX
     let y = g:defaultGuiWindowSizeY
     if a:preset ==# 0  
@@ -405,33 +402,33 @@ function! SetGuiWindowSize(preset=1, ...)
 
     exec "set lines=".x
     exec "set columns=".y
-endf
+endfunc
 "}}}2
 " Set Window Position with Mapping{{{2
-function! MoveGuiPositionUp(amount=15)
+func! MoveGuiPositionUp(amount=15)
     let posx=getwinposx()
     let posy=getwinposy()
     let posy=posy-a:amount
     exec "winpos ".posx." ".posy
-endf
-function! MoveGuiPositionDown(amount=15)
+endfunc
+func! MoveGuiPositionDown(amount=15)
     let posx=getwinposx()
     let posy=getwinposy()
     let posy=posy+a:amount
     exec "winpos ".posx." ".posy
-endf
-function! MoveGuiPositionLeft(amount=30)
+endfunc
+func! MoveGuiPositionLeft(amount=30)
     let posx=getwinposx()
     let posy=getwinposy()
     let posx=posx-a:amount
     exec "winpos ".posx." ".posy
-endf
-function! MoveGuiPositionRight(amount=30)
+endfunc
+func! MoveGuiPositionRight(amount=30)
     let posx=getwinposx()
     let posy=getwinposy()
     let posx=posx+a:amount
     exec "winpos ".posx." ".posy
-endf
+endfunc
 " allow the user to reposition the window with these keys
 nnoremap <silent> <pageup> :call MoveGuiPositionLeft()<cr>
 nnoremap <silent> <pagedown> :call MoveGuiPositionDown()<cr>
@@ -443,33 +440,33 @@ nnoremap <silent> <s-home> :call MoveGuiPositionUp(50)<cr>
 nnoremap <silent> <s-end> :call MoveGuiPositionRight(150)<cr>
 "}}}2
 " Set Window Size With Mappings{{{2
-function! DecreaseGuiCols(amount=3)
+func! DecreaseGuiCols(amount=3)
     let nlines = &lines
     let ncolumns = &columns
     let ncolumns=ncolumns-a:amount
     exec "set lines=".nlines." columns=".ncolumns
-endf
+endfunc
 
-function! DecreaseGuiLines(amount=3)
+func! DecreaseGuiLines(amount=3)
     let nlines = &lines
     let ncolumns = &columns
     let nlines=nlines-a:amount
     exec "set lines=".nlines." columns=".ncolumns
-endf
+endfunc
 
-function! IncreaseGuiLines(amount=3)
+func! IncreaseGuiLines(amount=3)
     let nlines = &lines
     let ncolumns = &columns
     let nlines=nlines+a:amount
     exec "set lines=".nlines." columns=".ncolumns
-endf
+endfunc
 
-function! IncreaseGuiCols(amount=3)
+func! IncreaseGuiCols(amount=3)
     let nlines = &lines
     let ncolumns = &columns
     let ncolumns=ncolumns+a:amount
     exec "set lines=".nlines." columns=".ncolumns
-endf
+endfunc
 " allow the user to change the size of the window with these keys
 " in insert mode
 nnoremap <silent> <m-pageup> :call DecreaseGuiCols()<cr>
@@ -482,16 +479,16 @@ nnoremap <silent> <m-end> :call IncreaseGuiCols()<cr>
 let g:cachedWindowSizeX = g:defaultGuiWindowSizeX
 let g:cachedWindowSizeY = g:defaultGuiWindowSizeY
 
-function! SetCachedWindowSize()
+func! SetCachedWindowSize()
     let g:cachedWindowSizeX = &lines
     let g:cachedWindowSizeY = &columns
-endf
+endfunc
 
 nnoremap g<pageup> :call SetCachedWindowSize()<cr>
 
-function! ResetToCachedWindowSize()
+func! ResetToCachedWindowSize()
     exec "set lines=".g:cachedWindowSizeX." columns=".g:cachedWindowSizeY
-endf
+endfunc
 
 nnoremap <silent> g<pagedown> :call ResetToCachedWindowSize()<cr>
 "}}}2
@@ -500,16 +497,16 @@ nnoremap <silent> g<pagedown> :call ResetToCachedWindowSize()<cr>
 let g:cachedWindowPositionX = g:defaultGuiWindowPositionX
 let g:cachedWindowPositiolnY = g:defaultGuiWindowPositionY
 
-function! SetCachedWindowPosition()
+func! SetCachedWindowPosition()
     let g:cachedWindowPositionX = getwinposx()
     let g:cachedWindowPositionY = getwinposy()
-endf
+endfunc
 
 nnoremap g<home> :call SetCachedWindowPosition()<cr>
 
-function! ResetToCachedWindowPosition()
+func! ResetToCachedWindowPosition()
     exec "winpos ".g:cachedWindowPositionX." ".g:cachedWindowPositionY
-endf
+endfunc
 
 nnoremap <silent> g<end> :call ResetToCachedWindowPosition()<cr>
 "}}}2
@@ -543,14 +540,14 @@ nnoremap <silent> <m-,> :vertical resize +2<cr>
 
 " find files and populate the quickfix list
 " use :FindFile <file name> <location> to call this
-fun! FindFiles(filename, loc)
+func! FindFiles(filename, loc)
   let error_file = tempname()
   silent exe '!find '.a:loc.' -name "'.a:filename.'" | xargs file | sed "s/:/:1:/" > '.error_file
   set errorformat=%f:%l:%m
   exe "cfile ". error_file
   copen
   call delete(error_file)
-endfun
+endfunc
 command! -nargs=+ FindFile call FindFiles(<f-args>)
 
 "}}}
@@ -560,6 +557,9 @@ command! -nargs=+ FindFile call FindFiles(<f-args>)
 " remap leader key
 nnoremap <space> <Nop>
 let mapleader = " "
+
+" use <cr> for keymappings
+nnoremap <cr> <nop>
 
 " in insert mode <c-b> acts like a leader key
 inoremap <c-b> <nop>
@@ -590,7 +590,7 @@ nnoremap <F2> <esc>:set spell!<cr>
 " allows the toggling of the highlighting of tabs
 let g:tabsAreHighlighted = 0
 syntax match Tab /\t/
-function! ToggleTabHighlighting()
+func! ToggleTabHighlighting()
     if g:tabsAreHighlighted ==# 0
         hi Tab gui=underline guifg=blue ctermbg=blue
         echom "Enabling Tab Highlighting"
@@ -602,25 +602,25 @@ function! ToggleTabHighlighting()
         " redraw screen in case of unwanted highlight changes
         call DrawScreenMyWay()
     endif
-endf
+endfunc
 nnoremap <F3> :call ToggleTabHighlighting()<cr>
 "}}}
 "<F4> ---{{{3
 " displays all custom functions in this vimrc and followed by a call option
 " NOTE: that this list must be updated as new custom functions are added to
 " this vimrc
-function! DisplayCustomFunctions()
+func! DisplayCustomFunctions()
     echom "1: DrawScreenMyWay"
     echom "2: SetGuiWindowSize"
     echom "3: DisplayTabSettings"
     echom "4: SetTabFunctionality"
     echom "5: RunMyNotesFold"
     echom ""
-endf
+endfunc
 
 " allow easy number selection and displays some advice about the selected
 " function
-function! SelectCustomFunctions(choice)
+func! SelectCustomFunctions(choice)
     if a:choice ==# 1
         echom "DrawScreenMyWay(color=g:color)"
         echom "Description: Draws the screen using settings particular to this vim configuration"
@@ -667,7 +667,7 @@ function! SelectCustomFunctions(choice)
     endif
     let res = res.'()'
     call feedkeys(':call '.res."\<left>")
-endf
+endfunc
 
 nnoremap <F4> :call DisplayCustomFunctions()<cr>:call SelectCustomFunctions()<left>
 "}}}3
@@ -676,18 +676,18 @@ nnoremap <F4> :call DisplayCustomFunctions()<cr>:call SelectCustomFunctions()<le
 let g:freqLocations = readfile(expand('$HOME/.vim/quick_locations.txt'))
 " ensure that we only grab lines that match the syntax "label":path
 " and are not comments
-call filter(g:freqLocations, 'v:val !~ "^#" && v:val =~ "\\v^\".+\":.+$"')
+call filter(g:freqLocations, 'v:val !~ ''\v^\s*#'' && v:val =~ ''\v^".+":.+$''')
 
 " display frequent locations
-function! DisplayFrequentLocations()
+func! DisplayFrequentLocations()
     for i in range(0, len(g:freqLocations)-1)
         echom i+1 . ': ' . split(g:freqLocations[i], '"')[0]
     endfor
     echom ""
-endf
+endfunc
 
 " places the frequent location directory as a command for the user
-function! SelectFrequentLocations(choice, editMode = 0)
+func! SelectFrequentLocations(choice, editMode = 0)
     if a:choice <=# len(g:freqLocations) && a:choice >#0 
         let res = split(g:freqLocations[a:choice - 1], '":')[1]
         if a:editMode ==# 0
@@ -701,7 +701,7 @@ function! SelectFrequentLocations(choice, editMode = 0)
         endif
         call feedkeys(feed)
     endif
-endf
+endfunc
 
 " general buffer edit
 nnoremap <F5> :call DisplayFrequentLocations()<cr>:call SelectFrequentLocations()<left>
@@ -724,7 +724,7 @@ nnoremap <F12> :source $MYVIMRC<cr>
 " also allows h and l to scroll faster
 " press gl to activate, press gl or <esc> in normal mode to deactivate
 let g:ScrollEnabled = 0
-function! ToggleScrollMode()
+func! ToggleScrollMode()
   if g:ScrollEnabled ==# 0
       nnoremap j <c-e>
       nnoremap k <c-y>
@@ -754,7 +754,7 @@ function! ToggleScrollMode()
       let g:ScrollEnabled = 0
       echom "-- ScrollMode Disabled --"
   endif
-endf
+endfunc
 nnoremap gl :call ToggleScrollMode()<cr>
 "}}}3
 
@@ -819,8 +819,8 @@ vnoremap <leader><leader> "+
 " cycle through buffers
 nnoremap gb :bnext<cr>
 nnoremap <leader>gb :bprev<cr>
-nnoremap ]b :bnext<cr>
-nnoremap [b :bprev<cr>
+nnoremap <tab> :bnext<cr>
+nnoremap <s-tab> :bprev<cr>
 
 " sets <c-w><c-t> to behave as :tabe %
 nnoremap <c-w><c-t> :tabe %<cr>
@@ -829,10 +829,15 @@ nnoremap <c-w><c-t> :tabe %<cr>
 
 " allows macros to be run on multiple lines
 xnoremap @ :<C-u>call ExecuteMacroOverVisualRange()<CR>
-function! ExecuteMacroOverVisualRange()
+func! ExecuteMacroOverVisualRange()
   echo "@".getcmdline()
   execute ":'<,'>normal @".nr2char(getchar())
-endfunction
+endfunc
+
+" inserts the working directory
+inoremap \\cd <c-r>=getcwd()<cr>
+" inserts the home directory
+inoremap \\~ <c-r>=$HOME<cr>
 
 
 " allows newlines to be added in normal mode, while staying in normal mode
@@ -884,31 +889,98 @@ augroup END
 " will not work properly.
 " Also cannot use numbers right now.
 " Also <c-i>e will not go to the end if at the end of the line
-nnoremap <silent><c-i>w :call search('\>\<Bar>\u', '')<cr>
-nnoremap <silent><c-i>b :call search('\>\<Bar>\u', 'b')<cr>
-nnoremap <silent><c-i>e <right>:call search('\>\<Bar>\u\<Bar>\$', '')<cr><left>
-onoremap <silent><c-i>w :call search('\>\<Bar>\u', '')<cr>
-onoremap <silent><c-i>b :call search('\>\<Bar>\u', 'b')<cr>
-onoremap <silent><c-i>e <right>:call search('\>\<Bar>\u', '')<cr><leit>
-vnoremap <silent><c-i>w <esc>:call search('\>\<Bar>\u', '')<cr>mqv`<o
-vnoremap <silent><c-i>b <esc>:call search('\>\<Bar>\u', 'b')<cr>v`<o
-vnoremap <silent><c-i>e <esc><right>:call search('\>\<Bar>\u', '')<cr>mqv`<o<left>
+nnoremap <silent> <leader><tab>w :call search('\>\<Bar>\u', '')<cr>
+nnoremap <silent> <leader><tab>b :call search('\>\<Bar>\u', 'b')<cr>
+nnoremap <silent> <leader><tab>e <right>:call search('\>\<Bar>\u\<Bar>\$', '')<cr><left>
+onoremap <silent> <leader><tab>w :call search('\>\<Bar>\u', '')<cr>
+onoremap <silent> <leader><tab>b :call search('\>\<Bar>\u', 'b')<cr>
+onoremap <silent> <leader><tab>e <right>:call search('\>\<Bar>\u', '')<cr><leit>
+vnoremap <silent> <leader><tab>w <esc>:call search('\>\<Bar>\u', '')<cr>mqv`<o
+vnoremap <silent> <leader><tab>b <esc>:call search('\>\<Bar>\u', 'b')<cr>v`<o
+vnoremap <silent> <leader><tab>e <esc><right>:call search('\>\<Bar>\u', '')<cr>mqv`<o<left>
 
 "}}}2
 "}}}
 " Macros {{{
-" Store macros according to file type
+" turn off q, we will use QQ instead
+nnoremap q <nop>
+"due to q being used in other mappings, allows QQ to be used to end macro
+"recording
+nnoremap Q <nop>
+nnoremap QQ q
 
+" enter will quick run the macro recorded in q
+nnoremap <c-cr> @q 
+" cycles the register values q -> m -> n -> b
+nnoremap <silent> <leader>Q<cr> :let @b = @n <bar> let @n = @m <bar> let @m = @q<cr>
+" quick check the macro registers
+"nnoremap Q<cr> :reg q <bar> reg m <bar> reg n <bar> reg b <bar> reg v<cr>:
+nnoremap Q<cr> :reg qmnbv<cr>:
+" runs what is in register v
+nnoremap <s-cr> @v 
 
+" allows easier re-editing of a macro
+nnoremap Qe q:ilet @q = <c-r><c-r>q
+" allows easier swapping of the primary macro register
+nmap Q<c-cr> Q<cr>let @q = @
+" allows easier swapping of the alternate macro register
+nmap Q<s-cr> Q<cr>let @v = @
+
+" swap the q and v register
+nnoremap <silent> Q<backspace> :let q = @q <bar> let @q = @v <bar> let @v = q<cr>
+" swaps the q and v register, cycles, then swaps p and v again
+nmap <silent> <leader>Q<backspace> Q<backspace><leader>Q<cr>Q<backspace>
+
+func! GetMacroHelpText() 
+            echom "Macro Help:"
+            echom "Q<F1> :- Open this help prompt"
+            echom " "
+            echom "@q :- Temporary register"
+            echom "@v :- \"Permanent\" Register"
+            echom "@m,n,b :- Cycle Registers"
+            echom "<C-CR> :- Run macro in the q register"
+            echom "<S-CR> :- Run macro in the v register"
+            echom "Q<CR> :- Display all macro registers"
+            echom "<leader>Q<CR> :- Cycle the content of the registers: q -> m -> n -> b"
+            echom "Qe :- Quickly edit the macro in the q register"
+            echom "Q<C-CR> :- Swap q register"
+            echom "Q<S-CR> :- Swap v register"
+            echom "Q<Backspace> :- Swap the q and v register"
+            echom "<leader>Q<Backspace> :- swaps the q and v register, cycles, then swaps p and v again"
+            echom "Ql :- Open the saved macro buffer in a split window"
+            echom "Qy :- Copy the given macro under the cursor in the saved macro buffer"
+            echom "<leader>Qy :- Cycle and copy the given macro under the cursor"
+            echom ""
+endfunc
+
+" open the help prompt
+nnoremap Q<F1> :call GetMacroHelpText()<cr>
+
+" display saved macros
+nnoremap Ql :split ~/.vim/user_macros.txt<cr>
+" quickly copy macro on line (in user macro file) into q register
+nnoremap Qy 0v$h"qy
+" same as above, but cycle first
+nmap <leader>Qy <leader>Q<cr>0v$h"qy
 "}}}
 
 "Plugin Settings {{{
-"source $HOME/.vim/enabled_plugins.vim
 " Startup {{{2
 " does basic bookkeeping for plugins
 "
 " figure out which plugins are active
-source ~/.vim/plugins_available.vim
+let enabledPluginsRaw = readfile(expand('$HOME/.vim/plugins_available.txt'))
+call filter(enabledPluginsRaw, 'v:val !~ ''\v^\s*#'' && v:val =~ ''\v^\s*%(\S+)\s+%(\d)\s*$''')
+
+let g:enabledPlugins = {}
+for item in enabledPluginsRaw
+    " gets the plugin name
+    let k = matchstr(item, '\v^%(\s*)@<=\S+%(\s+\d+\s*$)@=') 
+    " gets the plugin state
+    let v = matchstr(item, '\v^{-}%(\s*\S+\s+)@<=\d+%(\s*$)@=') 
+    " add to dictionary
+    let g:enabledPlugins[k] = v
+endfor
 " }}}2
 "Pathogen {{{2
 execute pathogen#infect()
@@ -930,7 +1002,7 @@ augroup Netrw
 augroup END
 "}}}2
 "Syntastic {{{2
-if g:Plugin_Enabled_syntastic ==# 1
+if g:enabledPlugins['syntastic'] ==# 1
 
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
@@ -948,14 +1020,16 @@ let g:syntastic_check_on_wq = 0
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
 
 " pops open syntastic
-nnoremap <C-w>e :SyntasticCheck<CR>
+nnoremap <c-w>e :SyntasticCheck<CR>
+nnoremap <c-w><c-e> :SyntasticCheck<CR>
 " resets (hides)
-nnoremap <leader><C-w>e :SyntasticReset<CR>
+nnoremap <leader><c-w>e :SyntasticReset<CR>
+nnoremap <leader><c-w><c-e> :SyntasticReset<CR>
 
 endif
 "}}}2
 "NERDTree {{{2
-if g:Plugin_Enabled_nerdtree ==# 1
+if g:enabledPlugins['nerdtree'] ==# 1
 
 " open and close nerdtree on demand
 nnoremap <silent> <c-w><c-\> :NERDTreeToggle<cr>
@@ -988,7 +1062,7 @@ endif
 ""source $HOME\.vim\bundle\vim-multiple-cursors\autoload\multiple_cursors.vim
 "}}}2
 "buffergator {{{2
-if g:Plugin_Enabled_vim_buffergator ==# 1
+if g:enabledPlugins['vim_buffergator'] ==# 1
 
 " causes the window not to expand when the plugin is opened
 let g:buffergator_autoexpand_on_split=0
@@ -1009,7 +1083,7 @@ nnoremap <silent> <leader>B :BuffergatorTabsToggle<cr>
 endif
 "}}}2
 " EasyMotion {{{2
-if g:Plugin_Enabled_vim_easymotion ==# 1
+if g:enabledPlugins['vim_easymotion'] ==# 1
 
 " keep the cursor on the same line when using easymode jk
 let g:EasyMotion_startofline = 0
@@ -1059,12 +1133,110 @@ omap <leader><leader>s <Plug>(easymotion-sn)
 endif
 "}}}2
 " NerdCommenter {{{2
-if g:Plugin_Enabled_nerdcommenter ==# 1
+if g:enabledPlugins['nerdcommenter'] ==# 1
 
 endif
 " }}}2
 " CtrlSpace {{{2
-if g:Plugin_Enabled_vim_ctrlspace ==# 1
+if g:enabledPlugins['vim_ctrlspace'] ==# 1
+
+endif
+" }}}2
+" YouCompleteMe {{{2
+if g:enabledPlugins['YouCompleteMe'] ==# 1
+
+" syntastic has to be disabled for java when using ycm
+if g:enabledPlugins['syntastic'] ==# 1
+    let g:syntastic_java_checkers = []
+endif
+
+" disable documentation display on cursor hover
+" Note: read up on this, 0 isn't a good value
+"let g:ycm_auto_hover = 0
+
+" instead allow this to be activated with a mapping
+nnoremap <leader>di <plug>(YCMHover)
+
+
+" allow language identifiers to be seeded from the language's syntax file
+let g:ycm_seed_identifiers_with_syntax = 1
+
+" if 1: closes the preview window after a preview is completed
+let g:ycm_autoclose_preview_window_after_completion = 0
+
+" the keys that are used to go backwards in the completion menu
+let g:ycm_key_list_previous_completion = ['<S-TAB>', '<Up>']
+
+" these keys will close the completion menu
+let g:ycm_key_list_stop_completion = ['<C-y>']
+
+" the key used to invoke the completion menu
+" By default it is <C-Space>
+let g:ycm_key_invoke_completion = '<c-enter>'
+
+
+" the black list for ycm: filetypes in this list will be ignored by ycm
+  let g:ycm_filetype_blacklist = {
+        \ 'tagbar': 1,
+        \ 'notes': 1,
+        \ 'markdown': 1,
+        \ 'netrw': 1,
+        \ 'unite': 1,
+        \ 'text': 1,
+        \ 'vimwiki': 1,
+        \ 'pandoc': 1,
+        \ 'infolog': 1,
+        \ 'leaderf': 1,
+        \ 'mail': 1
+        \}
+
+
+" allow refactoring easily
+cnoreabbrev ymrf YcmCompleter RefactorRename 
+
+" most mappings involve <leader like key>d, so we will clear it
+nmap <leader>d <nop>
+
+nnoremap <silent> <leader>dd :YcmShowDetailedDiagnostic<cr>
+let g:ycm_key_detailed_diagnostics = '<leader>dd'
+nnoremap <silent> <leader>dr :YcmCompleter GoToReferences<cr>
+nnoremap <silent> <leader>df :YcmCompleter FixIt<cr>
+nnoremap <silent> <leader>dF :YcmCompleter Format<cr>
+nnoremap <leader><leader>dr :YcmCompleter RefactorRename 
+
+" opens goto but in different window styles
+nnoremap <silent> <leader>dg :YcmCompleter GoToImprecise<cr>
+nnoremap <silent> <leader><leader>dg :YcmCompleter GoTo<cr>
+
+" go to the declaration
+nnoremap <leader>dn :YcmCompleter GoToDeclaration<cr>
+" the goto command currently tries to find a definition within a file,
+" while this command will always try to find the definition
+nnoremap <leader><leader>dn :YcmCompleter GoToDefinition<cr>
+
+
+" open the documentation for the item under the cursor
+" this one doesn't recompile the code
+nnoremap <leader>dD :YcmCompleter GetDocImprecise<cr>
+" this one does
+nnoremap <leader><leader>dD :YcmCompleter GetDoc<cr>
+
+" finds the type of the object under the cursor
+nnoremap <leader>dt :YcmCompleter GetTypeImprecise<cr>
+nnoremap <leader><leader>dt :YcmCompleter GetType<cr>
+
+
+" allow enabling and disabling of ycm auto typing\
+" turn off YCM
+nnoremap <leader>do :let g:ycm_auto_trigger=0<CR>
+" turn on YCM
+nnoremap <leader>dO :let g:ycm_auto_trigger=1<CR>
+
+" restart the ycm server
+nnoremap <leader>dR :YcmRestartServer<CR>
+
+" force recompilation and diagnostics
+nnoremap <leader>dc :YcmForceCompileAndDiagnostics<CR>
 
 endif
 " }}}2

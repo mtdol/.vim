@@ -1,0 +1,14 @@
+# This file is intended to contain macros used by the user, for use in vim
+# Lines that start with '#' are comments.
+#################################################################################
+
+# builds a list of increasing numbers of the form
+    # 1 ........
+    # 2 ........
+# To run this enter down a line of text in any form you like:
+# The element will be duplicated n times and the leftmost number will be increased
+yyp^
+
+
+
+

@@ -1,0 +1,17 @@
+# These are the plugins whose settings can be modified on this machine
+# If you want to disable the checking for any one of these:
+# gitignore this file and customize it yourself
+
+# Comments are on lines that start with a hash.
+# Entries are of form:
+# \s*<plugin name>\s[10]\s*
+# where plugin name is exactly the same as in the bundle directory
+# and the number is either 0 or 1 where 0 is disabled and 1 is endabled.
+
+nerdcommenter 1
+nerdtree 1
+syntastic 1
+vim_buffergator 1
+vim_ctrlspace 1
+vim_easymotion 1
+YouCompleteMe 1
