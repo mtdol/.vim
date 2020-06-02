@@ -60,6 +60,13 @@ set hidden
 " keep vim from "helpfully" inserting newlines into your text
 set formatoptions-=tc
 
+" the time until a ambigous mapping resolves
+set timeoutlen=1000
+" the time until a escape key on the terminal is resolved
+" If this is set to high then a press of the escape key might not work when
+" followed by other keypresses.
+set ttimeoutlen=25
+
 " This loads the file "ftplugin.vim" in 'runtimepath'.
 filetype plugin indent on
 
@@ -122,14 +129,16 @@ set spelllang=en_us
 "Display and Audio Settings -----{{{
 
 if has("gui_running")
-    let g:color = "desert"
+    let g:currentColor = "evening"
 else
-    let g:color = "blue"
+    let g:currentColor = "blue"
 endif
 
 let g:barColor = 8
 let g:guiBarColor = "#222222"
 let g:backGroundStyle = "dark"
+
+let g:defaultFont = "consolas:h11"
 
 syntax on
 set number
@@ -140,10 +149,12 @@ set ttyfast
 " wrap lines
 set wrap
 
+" set the font
+exec "set guifont=".g:defaultFont
 
 " draws the screen in my prefered format
 func! DrawScreenMyWay(...)
-    let g:color = a:0 >= 1 ? a:1 : g:color
+    let g:currentColor = a:0 >= 1 ? a:1 : g:currentColor
     " the second argument will either be the console color or the gui color
     " depending on whether console or gui vim is running
     if has ("gui_running")
@@ -152,7 +163,7 @@ func! DrawScreenMyWay(...)
         let g:barColor = a:0 >= 2 ? a:2 : g:barColor
     endif
 
-    exec "colorscheme ".g:color
+    exec "colorscheme ".g:currentColor
 
     if has ("gui_running")
         " highlights the columns to the right of 80"
@@ -167,6 +178,8 @@ func! DrawScreenMyWay(...)
     exec "highlight ColorColumn ctermbg=".g:barColor." guibg=".g:guiBarColor
 endfunc
 
+exec "colorscheme ".g:currentColor
+
 call DrawScreenMyWay()
 
 
@@ -175,6 +188,7 @@ call DrawScreenMyWay()
 set laststatus=2
 " statusline settings
 set statusline=w%{winnr()}\ \ %-4l\ %-3c\ %t\ %y%m\ %3p%%\ 
+
 
 " turn off the annoying beeping and flashing
 set vb t_vb=
@@ -330,7 +344,7 @@ endfunc
 func! SetNoBackup()
     setl nobackup
     setl noundofile
-    set filetype=NoBackupTxt
+    echom "File is set to NoBackup"
 endfunc
 
 augroup saveFunctionality
@@ -359,9 +373,6 @@ let g:largeGuiWindowSizeY = 125
 let g:defaultGuiWindowPositionX = 54
 let g:defaultGuiWindowPositionY = 109
 
-" set the display font
-set guifont=consolas:h11
-
 " set the size of the vim window only at startup
 augroup GuiSettings
 autocmd GuiEnter * exec "set lines=".g:defaultGuiWindowSizeX | 
@@ -378,6 +389,7 @@ augroup END
 set guioptions -=m
 " turn off icon menubar
 set guioptions -=T
+
 "}}}2
 " Resize Window Function{{{2
 " resizes the gui window according to the given specification
@@ -622,7 +634,7 @@ endfunc
 " function
 func! SelectCustomFunctions(choice)
     if a:choice ==# 1
-        echom "DrawScreenMyWay(color=g:color)"
+        echom "DrawScreenMyWay(color=g:currentColor)"
         echom "Description: Draws the screen using settings particular to this vim configuration"
         echom "Params:"
         echom "    color: The color to set the screen"
@@ -839,6 +851,7 @@ inoremap \\cd <c-r>=getcwd()<cr>
 " inserts the home directory
 inoremap \\~ <c-r>=$HOME<cr>
 
+cnoreabbrev cd% cd %:p:h
 
 " allows newlines to be added in normal mode, while staying in normal mode
 nnoremap <leader>o mqo<esc>`q
@@ -902,8 +915,6 @@ vnoremap <silent> <leader><tab>e <esc><right>:call search('\>\<Bar>\u', '')<cr>m
 "}}}2
 "}}}
 " Macros {{{
-" turn off q, we will use QQ instead
-nnoremap q <nop>
 "due to q being used in other mappings, allows QQ to be used to end macro
 "recording
 nnoremap Q <nop>
@@ -963,17 +974,22 @@ nnoremap Qy 0v$h"qy
 " same as above, but cycle first
 nmap <leader>Qy <leader>Q<cr>0v$h"qy
 "}}}
+" Terminal {{{
+" open powershell easily
+cnoreabbrev termp terminal pwsh
+" }}}
+
 
 "Plugin Settings {{{
 " Startup {{{2
 " does basic bookkeeping for plugins
 "
 " figure out which plugins are active
-let enabledPluginsRaw = readfile(expand('$HOME/.vim/plugins_available.txt'))
-call filter(enabledPluginsRaw, 'v:val !~ ''\v^\s*#'' && v:val =~ ''\v^\s*%(\S+)\s+%(\d)\s*$''')
+let s:enabledPluginsRaw = readfile(expand('$HOME/.vim/enabled_plugins.txt'))
+call filter(s:enabledPluginsRaw, 'v:val !~ ''\v^\s*#'' && v:val =~ ''\v^\s*%(\S+)\s+%(\d)\s*$''')
 
 let g:enabledPlugins = {}
-for item in enabledPluginsRaw
+for item in s:enabledPluginsRaw
     " gets the plugin name
     let k = matchstr(item, '\v^%(\s*)@<=\S+%(\s+\d+\s*$)@=') 
     " gets the plugin state
@@ -981,9 +997,25 @@ for item in enabledPluginsRaw
     " add to dictionary
     let g:enabledPlugins[k] = v
 endfor
+
+" checks for command line overide of enabled plugins
+if exists('g:Cli_Plugs')
+    for item in split(g:Cli_Plugs, ' ') 
+        if len(item) !=# 0 && item =~ '\v\S+:[01]'
+            let kv = split(item, ':')
+            let g:enabledPlugins[kv[0]] = kv[1]
+        endif
+    endfor
+endif
+
 " }}}2
+" setup vundle
+filetype off
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+Plugin 'VundleVim/Vundle.vim'
 "Pathogen {{{2
-execute pathogen#infect()
+"execute pathogen#infect()
 "}}}2
 "Man.vim {{{2
 " allows unix man pages to be read within vim (on unix system)
@@ -1003,6 +1035,7 @@ augroup END
 "}}}2
 "Syntastic {{{2
 if g:enabledPlugins['syntastic'] ==# 1
+Plugin 'vim-syntastic/syntastic'
 
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
@@ -1030,8 +1063,9 @@ endif
 "}}}2
 "NERDTree {{{2
 if g:enabledPlugins['nerdtree'] ==# 1
-
+Plugin 'scrooloose/nerdtree'
 " open and close nerdtree on demand
+
 nnoremap <silent> <c-w><c-\> :NERDTreeToggle<cr>
 nnoremap <silent> <c-w>\ :NERDTreeToggle<cr>
 
@@ -1063,6 +1097,7 @@ endif
 "}}}2
 "buffergator {{{2
 if g:enabledPlugins['vim_buffergator'] ==# 1
+Plugin 'jeetsukumaran/vim-buffergator'
 
 " causes the window not to expand when the plugin is opened
 let g:buffergator_autoexpand_on_split=0
@@ -1084,6 +1119,7 @@ endif
 "}}}2
 " EasyMotion {{{2
 if g:enabledPlugins['vim_easymotion'] ==# 1
+Plugin 'easymotion/vim-easymotion'
 
 " keep the cursor on the same line when using easymode jk
 let g:EasyMotion_startofline = 0
@@ -1134,16 +1170,19 @@ endif
 "}}}2
 " NerdCommenter {{{2
 if g:enabledPlugins['nerdcommenter'] ==# 1
+Plugin 'ddollar/nerdcommenter'
 
 endif
 " }}}2
 " CtrlSpace {{{2
 if g:enabledPlugins['vim_ctrlspace'] ==# 1
+Plugin 'vim-ctrlspace/vim-ctrlspace'
 
 endif
 " }}}2
 " YouCompleteMe {{{2
 if g:enabledPlugins['YouCompleteMe'] ==# 1
+Plugin 'valloric/youcompleteme'
 
 " syntastic has to be disabled for java when using ycm
 if g:enabledPlugins['syntastic'] ==# 1
@@ -1172,7 +1211,7 @@ let g:ycm_key_list_stop_completion = ['<C-y>']
 
 " the key used to invoke the completion menu
 " By default it is <C-Space>
-let g:ycm_key_invoke_completion = '<c-enter>'
+"let g:ycm_key_invoke_completion = '<C-Space>'
 
 
 " the black list for ycm: filetypes in this list will be ignored by ycm
@@ -1240,6 +1279,14 @@ nnoremap <leader>dc :YcmForceCompileAndDiagnostics<CR>
 
 endif
 " }}}2
+" fzf {{{2
+if g:enabledPlugins['fzf'] ==# 1
+set rtp+=~/.vim/bundle/fzf
+
+endif
+" }}}2
+call vundle#end()
+filetype plugin indent on
 "}}}
 "{{{Source Custom Modules
 source ~/.vim/custom_modules/MyNotesFold/MyNotesFold.vim
@@ -1249,4 +1296,8 @@ source ~/.vim/custom_modules/MyNotesFold/MyNotesFold.vim
 "{{{Source Vim Code Unique to this System
 source ~/.vim/vimrc_exceptions.vim
 
+"}}}
+"Source Final Changes {{{
+" set the font
+"set guifont=consolas:h10
 "}}}

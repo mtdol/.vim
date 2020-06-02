@@ -5,7 +5,7 @@
 # builds a list of increasing numbers of the form
     # 1 ........
     # 2 ........
-# To run this enter down a line of text in any form you like:
+# To run this enter down a line of text in any form you like, featuring a number
 # The element will be duplicated n times and the leftmost number will be increased
 yyp^
 

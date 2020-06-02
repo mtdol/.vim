@@ -1,4 +1,4 @@
-# These are the plugins whose settings can be modified on this machine
+# These are the plugins that will be loaded when vim starts.
 # If you want to disable the checking for any one of these:
 # gitignore this file and customize it yourself
 
@@ -12,6 +12,7 @@ nerdcommenter 1
 nerdtree 1
 syntastic 1
 vim_buffergator 1
-vim_ctrlspace 1
+vim_ctrlspace 0
 vim_easymotion 1
-YouCompleteMe 1
+YouCompleteMe 0
+fzf 1

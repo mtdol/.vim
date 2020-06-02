@@ -46,7 +46,7 @@ endf
 " specifies to force the run
 function! RunMyNotesFold(intensive = 1)
 
-    set filetype=MyNotes
+    "set filetype=MyNotes
     source ~/.vim/syntax/MyNotes.vim
     call MyNotesFold()
     call feedkeys("zm")
