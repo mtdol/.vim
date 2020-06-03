@@ -70,6 +70,10 @@ set ttimeoutlen=25
 " This loads the file "ftplugin.vim" in 'runtimepath'.
 filetype plugin indent on
 
+" disable annoying autoindenting with # in powershell
+augroup indentation
+    autocmd FileType ps1 setl nocindent smartindent | inoremap <buffer> # X<c-h>#
+augroup END
 
 "}}}
 "Search Functionality -----{{{
@@ -977,6 +981,8 @@ nmap <leader>Qy <leader>Q<cr>0v$h"qy
 " Terminal {{{
 " open powershell easily
 cnoreabbrev termp terminal pwsh
+cnoreabbrev termb terminal bash
+cnoreabbrev termc terminal cmd
 " }}}
 
 
