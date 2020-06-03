@@ -1189,6 +1189,9 @@ if g:enabledPlugins['vim_ctrlspace'] ==# 1
 "Plugin 'vim-ctrlspace/vim-ctrlspace'
 set rtp+=~/.vim/bundle/vim-ctrlspace
 
+" allow alternate access to the plugin if <c-space> doesn't work
+nnoremap <leader><leader>b :CtrlSpace<cr>
+
 endif
 " }}}2
 " YouCompleteMe {{{2
