@@ -985,7 +985,6 @@ cnoreabbrev termb terminal bash
 cnoreabbrev termc terminal cmd
 " }}}
 
-
 "Plugin Settings {{{
 " Startup {{{2
 " does basic bookkeeping for plugins
@@ -1018,8 +1017,8 @@ endif
 " setup vundle
 filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-Plugin 'VundleVim/Vundle.vim'
+"call vundle#begin()
+"Plugin 'VundleVim/Vundle.vim'
 "Pathogen {{{2
 "execute pathogen#infect()
 "}}}2
@@ -1041,7 +1040,8 @@ augroup END
 "}}}2
 "Syntastic {{{2
 if g:enabledPlugins['syntastic'] ==# 1
-Plugin 'vim-syntastic/syntastic'
+"Plugin 'vim-syntastic/syntastic'
+set rtp+=~/.vim/bundle/syntastic
 
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
@@ -1069,7 +1069,8 @@ endif
 "}}}2
 "NERDTree {{{2
 if g:enabledPlugins['nerdtree'] ==# 1
-Plugin 'scrooloose/nerdtree'
+"Plugin 'scrooloose/nerdtree'
+set rtp+=~/.vim/bundle/nerdtree
 " open and close nerdtree on demand
 
 nnoremap <silent> <c-w><c-\> :NERDTreeToggle<cr>
@@ -1103,7 +1104,8 @@ endif
 "}}}2
 "buffergator {{{2
 if g:enabledPlugins['vim_buffergator'] ==# 1
-Plugin 'jeetsukumaran/vim-buffergator'
+"Plugin 'jeetsukumaran/vim-buffergator'
+set rtp+=~/.vim/bundle/vim-buffergator
 
 " causes the window not to expand when the plugin is opened
 let g:buffergator_autoexpand_on_split=0
@@ -1125,7 +1127,8 @@ endif
 "}}}2
 " EasyMotion {{{2
 if g:enabledPlugins['vim_easymotion'] ==# 1
-Plugin 'easymotion/vim-easymotion'
+"Plugin 'easymotion/vim-easymotion'
+set rtp+=~/.vim/bundle/vim-easymotion
 
 " keep the cursor on the same line when using easymode jk
 let g:EasyMotion_startofline = 0
@@ -1176,19 +1179,22 @@ endif
 "}}}2
 " NerdCommenter {{{2
 if g:enabledPlugins['nerdcommenter'] ==# 1
-Plugin 'ddollar/nerdcommenter'
+"Plugin 'ddollar/nerdcommenter'
+set rtp+=~/.vim/bundle/nerdcommenter
 
 endif
 " }}}2
 " CtrlSpace {{{2
 if g:enabledPlugins['vim_ctrlspace'] ==# 1
-Plugin 'vim-ctrlspace/vim-ctrlspace'
+"Plugin 'vim-ctrlspace/vim-ctrlspace'
+set rtp+=~/.vim/bundle/vim-ctrlspace
 
 endif
 " }}}2
 " YouCompleteMe {{{2
 if g:enabledPlugins['YouCompleteMe'] ==# 1
-Plugin 'valloric/youcompleteme'
+"Plugin 'valloric/youcompleteme'
+set rtp+=~/.vim/bundle/youcompleteme
 
 " syntastic has to be disabled for java when using ycm
 if g:enabledPlugins['syntastic'] ==# 1
@@ -1291,7 +1297,7 @@ set rtp+=~/.vim/bundle/fzf
 
 endif
 " }}}2
-call vundle#end()
+"call vundle#end()
 filetype plugin indent on
 "}}}
 "{{{Source Custom Modules
