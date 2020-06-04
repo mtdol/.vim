@@ -574,9 +574,6 @@ command! -nargs=+ FindFile call FindFiles(<f-args>)
 nnoremap <space> <Nop>
 let mapleader = " "
 
-" use <cr> for keymappings
-nnoremap <cr> <nop>
-
 " in insert mode <c-b> acts like a leader key
 inoremap <c-b> <nop>
 
@@ -835,8 +832,8 @@ vnoremap <leader><leader> "+
 " cycle through buffers
 nnoremap gb :bnext<cr>
 nnoremap <leader>gb :bprev<cr>
-nnoremap <tab> :bnext<cr>
-nnoremap <s-tab> :bprev<cr>
+"nnoremap <tab> :bnext<cr>
+"nnoremap <s-tab> :bprev<cr>
 
 " sets <c-w><c-t> to behave as :tabe %
 nnoremap <c-w><c-t> :tabe %<cr>
@@ -887,7 +884,7 @@ augroup braces
     " python: inserts the parens and the colon at the end
     autocmd FileType python :inoremap <buffer> <c-b>b ():<esc>hi
     " Csharp
-    autocmd BufNewFile,BufRead *.cs :inoremap <buffer> <c-b>b <esc>$a<enter>{<cr>}<esc>O<tab>
+    autocmd BufNewFile,BufRead *.cs :inoremap <buffer> <c-b>b <esc>$a<cr>{<cr>}<esc>O<tab>
 augroup END
 
 " places //DEBUG
@@ -906,15 +903,15 @@ augroup END
 " will not work properly.
 " Also cannot use numbers right now.
 " Also <c-i>e will not go to the end if at the end of the line
-nnoremap <silent> <leader><tab>w :call search('\>\<Bar>\u', '')<cr>
-nnoremap <silent> <leader><tab>b :call search('\>\<Bar>\u', 'b')<cr>
-nnoremap <silent> <leader><tab>e <right>:call search('\>\<Bar>\u\<Bar>\$', '')<cr><left>
-onoremap <silent> <leader><tab>w :call search('\>\<Bar>\u', '')<cr>
-onoremap <silent> <leader><tab>b :call search('\>\<Bar>\u', 'b')<cr>
-onoremap <silent> <leader><tab>e <right>:call search('\>\<Bar>\u', '')<cr><leit>
-vnoremap <silent> <leader><tab>w <esc>:call search('\>\<Bar>\u', '')<cr>mqv`<o
-vnoremap <silent> <leader><tab>b <esc>:call search('\>\<Bar>\u', 'b')<cr>v`<o
-vnoremap <silent> <leader><tab>e <esc><right>:call search('\>\<Bar>\u', '')<cr>mqv`<o<left>
+"nnoremap <silent> <leader><tab>w :call search('\>\<Bar>\u', '')<cr>
+"nnoremap <silent> <leader><tab>b :call search('\>\<Bar>\u', 'b')<cr>
+"nnoremap <silent> <leader><tab>e <right>:call search('\>\<Bar>\u\<Bar>\$', '')<cr><left>
+"onoremap <silent> <leader><tab>w :call search('\>\<Bar>\u', '')<cr>
+"onoremap <silent> <leader><tab>b :call search('\>\<Bar>\u', 'b')<cr>
+"onoremap <silent> <leader><tab>e <right>:call search('\>\<Bar>\u', '')<cr><leit>
+"vnoremap <silent> <leader><tab>w <esc>:call search('\>\<Bar>\u', '')<cr>mqv`<o
+"vnoremap <silent> <leader><tab>b <esc>:call search('\>\<Bar>\u', 'b')<cr>v`<o
+"vnoremap <silent> <leader><tab>e <esc><right>:call search('\>\<Bar>\u', '')<cr>mqv`<o<left>
 
 "}}}2
 "}}}
@@ -935,7 +932,7 @@ nnoremap Q<cr> :reg qmnbv<cr>:
 nnoremap <s-cr> @v 
 
 " allows easier re-editing of a macro
-nnoremap Qe q:ilet @q = <c-r><c-r>q
+nnoremap Qe q:ilet @q = '<c-r><c-r>q'<left>
 " allows easier swapping of the primary macro register
 nmap Q<c-cr> Q<cr>let @q = @
 " allows easier swapping of the alternate macro register
@@ -979,7 +976,7 @@ nnoremap Qy 0v$h"qy
 nmap <leader>Qy <leader>Q<cr>0v$h"qy
 "}}}
 " Terminal {{{
-" open powershell easily
+" open shell types easily
 cnoreabbrev termp terminal pwsh
 cnoreabbrev termb terminal bash
 cnoreabbrev termc terminal cmd
@@ -1019,9 +1016,6 @@ filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 "call vundle#begin()
 "Plugin 'VundleVim/Vundle.vim'
-"Pathogen {{{2
-"execute pathogen#infect()
-"}}}2
 "Man.vim {{{2
 " allows unix man pages to be read within vim (on unix system)
 " additionally <s-k> can be used to search up a term by going outside
@@ -1077,30 +1071,6 @@ nnoremap <silent> <c-w><c-\> :NERDTreeToggle<cr>
 nnoremap <silent> <c-w>\ :NERDTreeToggle<cr>
 
 endif
-"}}}2
-"ack.vim {{{2
-" don't automatically jump to the first match
-"cnoreabbrev ack Ack!
-"cnoreabbrev ackf AckFile!
-"}}}2
-"vim-multiple-cursors {{{2
-""allow easy use of the MultipleCursorsFind function
-"nnoremap <leader><c-n> :MultipleCursorsFind<space>
-
-"" force manual mappings
-"let g:multi_cursor_use_default_mapping=0
-
-"let g:multi_cursor_start_word_key      = '<C-n>'
-"let g:multi_cursor_select_all_word_key = '<A-n>'
-"let g:multi_cursor_start_key           = 'g<C-n>'
-"let g:multi_cursor_select_all_key      = 'g<A-n>'
-"let g:multi_cursor_next_key            = '<C-n>'
-"let g:multi_cursor_prev_key            = '<C-p>'
-"let g:multi_cursor_skip_key            = '<C-x>'
-"let g:multi_cursor_quit_key            = '<Esc>'
-
-""reload plugin
-""source $HOME\.vim\bundle\vim-multiple-cursors\autoload\multiple_cursors.vim
 "}}}2
 "buffergator {{{2
 if g:enabledPlugins['vim_buffergator'] ==# 1
@@ -1297,6 +1267,15 @@ endif
 " fzf {{{2
 if g:enabledPlugins['fzf'] ==# 1
 set rtp+=~/.vim/bundle/fzf
+
+endif
+" }}}2
+" CamelCaseMotion {{{2
+if g:enabledPlugins['CamelCaseMotion'] ==# 1
+set rtp+=~/.vim/bundle/CamelCaseMotion
+
+let g:camelcasemotion_key = '<tab>'
+
 
 endif
 " }}}2

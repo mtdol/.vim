@@ -16,3 +16,4 @@ vim_ctrlspace 1
 vim_easymotion 1
 YouCompleteMe 1
 fzf 1
+CamelCaseMotion 1
