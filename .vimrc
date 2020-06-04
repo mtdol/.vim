@@ -104,7 +104,7 @@ noh
 
 " toggles the display of search highlighting, but causes a new search
 " to re-enable highlighting
-nnoremap <silent><expr> <Leader>h (&hls && v:hlsearch ? ':nohls' : ':set hls')."\n"
+nnoremap <silent><expr> <leader>h (&hls && v:hlsearch ? ':nohls' : ':set hls')."\n"
 
 " easier text replacement
 nnoremap \s :%s/\V//gc<left><left><left><left>
@@ -135,7 +135,7 @@ set spelllang=en_us
 if has("gui_running")
     let g:currentColor = "evening"
 else
-    let g:currentColor = "blue"
+    let g:currentColor = "default"
 endif
 
 let g:barColor = 8
@@ -1190,7 +1190,7 @@ if g:enabledPlugins['vim_ctrlspace'] ==# 1
 set rtp+=~/.vim/bundle/vim-ctrlspace
 
 " allow alternate access to the plugin if <c-space> doesn't work
-nnoremap <leader><leader>b :CtrlSpace<cr>
+nnoremap <silent> <leader><leader>b :CtrlSpace<cr>
 
 endif
 " }}}2
@@ -1313,6 +1313,4 @@ source ~/.vim/vimrc_exceptions.vim
 
 "}}}
 "Source Final Changes {{{
-" set the font
-"set guifont=consolas:h10
 "}}}
