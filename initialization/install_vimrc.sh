@@ -1,21 +1,21 @@
 # Sets up the environment required for the vimrc
 
-# Since we are storing .vimrc, .gvimrc, and .vsvimrc in the ~/.vim/ directory
-# we need to make a symbolic link to these in the ~ directory
-if [ ! -f ~/.vimrc ]
-then
-ln -s ~/.vim/.vimrc ~/.vimrc
-fi
+## Since we are storing .vimrc, .gvimrc, and .vsvimrc in the ~/.vim/ directory
+## we need to make a symbolic link to these in the ~ directory
+#if [ ! -f ~/.vimrc ]
+#then
+#ln -s ~/.vim/.vimrc ~/.vimrc
+#fi
 
-if [ ! -f ~/.gvimrc ]
-then
-ln -s ~/.vim/.gvimrc ~/.gvimrc
-fi
+#if [ ! -f ~/.gvimrc ]
+#then
+#ln -s ~/.vim/.gvimrc ~/.gvimrc
+#fi
 
-if [ ! -f ~/.vsvimrc ]
-then
-ln -s ~/.vim/.vsvimrc ~/.vsvimrc
-fi
+#if [ ! -f ~/.vsvimrc ]
+#then
+#ln -s ~/.vim/.vsvimrc ~/.vsvimrc
+#fi
 
 # make necessary directories
 if [ ! -d ~/.vim ]

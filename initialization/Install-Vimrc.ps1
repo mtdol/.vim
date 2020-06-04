@@ -9,16 +9,16 @@ This utility requires admin privileges to make symbolic links;
 Otherwise the program will run, but will not be able to make symbolic links.
 #>
 
-# create symbolic links to all files that are read in the ~ directory
-if (Test-Path ~\.vimrc -eq $false) {
-    new-item -ItemType SymbolicLink -Path ~\.vimrc -Target ~\.vim\.vimrc
-}
-if (Test-Path ~\.gvimrc -eq $false) {
-    new-item -ItemType SymbolicLink -Path ~\.gvimrc -Target ~\.vim\.gvimrc
-}
-if (Test-Path ~\.vsvimrc -eq $false) {
-    new-item -ItemType SymbolicLink -Path ~\.vsvimrc -Target ~\.vim\.vsvimrc
-}
+## create symbolic links to all files that are read in the ~ directory
+#if (Test-Path ~\.vimrc -eq $false) {
+    #new-item -ItemType SymbolicLink -Path ~\.vimrc -Target ~\.vim\.vimrc
+#}
+#if (Test-Path ~\.gvimrc -eq $false) {
+    #new-item -ItemType SymbolicLink -Path ~\.gvimrc -Target ~\.vim\.gvimrc
+#}
+#if (Test-Path ~\.vsvimrc -eq $false) {
+    #new-item -ItemType SymbolicLink -Path ~\.vsvimrc -Target ~\.vim\.vsvimrc
+#}
 
 # causes .vim/vimfiles to just lead back to .vim (vim on windows uses the
 # vimfiles directory, but it is easier for versioning to just use .vim)
