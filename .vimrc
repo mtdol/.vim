@@ -177,7 +177,7 @@ func! DrawScreenMyWay(...)
         set colorcolumn=81
     endif
     " set background
-    let background = g:backGroundStyle
+    exec "set background=".g:backGroundStyle
     " using this color; change ctermbg to change the color of the highlight"
     exec "highlight ColorColumn ctermbg=".g:barColor." guibg=".g:guiBarColor
 endfunc
