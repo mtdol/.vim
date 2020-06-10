@@ -12,8 +12,8 @@ nerdcommenter 1
 nerdtree 1
 syntastic 1
 vim_buffergator 1
-vim_ctrlspace 1
+vim_ctrlspace 0
 vim_easymotion 1
-YouCompleteMe 1
+YouCompleteMe 0
 fzf 1
 CamelCaseMotion 1

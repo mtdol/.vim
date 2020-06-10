@@ -75,6 +75,316 @@ augroup indentation
     autocmd FileType ps1 setl nocindent smartindent | inoremap <buffer> # X<c-h>#
 augroup END
 
+"Key readjustments -----{{{2
+
+" remap leader key
+nnoremap <space> <Nop>
+let mapleader = " "
+
+" in insert mode <c-b> acts like a leader key
+inoremap <c-b> <nop>
+
+" make alt work right on different terminals
+set <M-h>=h
+set <M-j>=j
+set <M-k>=k
+set <M-l>=l
+
+"}}}2
+
+"}}}
+"Plugin Settings {{{
+" Startup {{{2
+" does basic bookkeeping for plugins
+"
+" figure out which plugins are active
+let s:enabledPluginsRaw = readfile(expand('$HOME/.vim/enabled_plugins.txt'))
+call filter(s:enabledPluginsRaw, 'v:val !~ ''\v^\s*#'' && v:val =~ ''\v^\s*%(\S+)\s+%(\d)\s*$''')
+
+let g:enabledPlugins = {}
+for item in s:enabledPluginsRaw
+    " gets the plugin name
+    let k = matchstr(item, '\v^%(\s*)@<=\S+%(\s+\d+\s*$)@=') 
+    " gets the plugin state
+    let v = matchstr(item, '\v^{-}%(\s*\S+\s+)@<=\d+%(\s*$)@=') 
+    " add to dictionary
+    let g:enabledPlugins[k] = v
+endfor
+
+" checks for command line overide of enabled plugins
+if exists('g:Cli_Plugs')
+    for item in split(g:Cli_Plugs, ' ') 
+        if len(item) !=# 0 && item =~ '\v\S+:[01]'
+            let kv = split(item, ':')
+            let g:enabledPlugins[kv[0]] = kv[1]
+        endif
+    endfor
+endif
+
+" }}}2
+"Man.vim {{{2
+" allows unix man pages to be read within vim (on unix system)
+" additionally <s-k> can be used to search up a term by going outside
+" of vim
+runtime ftplugin/man.vim
+"}}}2
+"Netrw {{{2
+" starts netrw without the banner by default
+let g:netrw_banner=0
+
+" cause Netrw buffers to be closable
+augroup Netrw
+    autocmd!
+    autocmd FileType netrw setl bufhidden=wipe
+augroup END
+"}}}2
+"Syntastic {{{2
+if g:enabledPlugins['syntastic'] ==# 1
+"Plugin 'vim-syntastic/syntastic'
+set rtp+=~/.vim/bundle/syntastic
+
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+
+" when enabled causes syntastic to check files when first loaded and when saving
+let g:syntastic_check_on_open = 1
+
+let g:syntastic_check_on_wq = 0
+
+" causes syntastic to not start up until asked
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
+
+" pops open syntastic
+nnoremap <c-w>e :SyntasticCheck<CR>
+nnoremap <c-w><c-e> :SyntasticCheck<CR>
+" resets (hides)
+nnoremap <leader><c-w>e :SyntasticReset<CR>
+nnoremap <leader><c-w><c-e> :SyntasticReset<CR>
+
+endif
+"}}}2
+"NERDTree {{{2
+if g:enabledPlugins['nerdtree'] ==# 1
+"Plugin 'scrooloose/nerdtree'
+set rtp+=~/.vim/bundle/nerdtree
+" open and close nerdtree on demand
+
+nnoremap <silent> <c-w><c-\> :NERDTreeToggle<cr>
+nnoremap <silent> <c-w>\ :NERDTreeToggle<cr>
+
+endif
+"}}}2
+"buffergator {{{2
+if g:enabledPlugins['vim_buffergator'] ==# 1
+"Plugin 'jeetsukumaran/vim-buffergator'
+set rtp+=~/.vim/bundle/vim-buffergator
+
+" causes the window not to expand when the plugin is opened
+let g:buffergator_autoexpand_on_split=0
+
+" sort by most recently used
+let g:buffergator_sort_regime="mru"
+
+" display files with their parent directory
+let g:buffergator_display_regime="parentdir"
+
+" keeps the plugin from remapping keys on its own
+let g:buffergator_suppress_keymaps=1
+
+" now provide our own mappings
+nnoremap <silent> <leader>b :BuffergatorToggle<cr>
+nnoremap <silent> <leader>B :BuffergatorTabsToggle<cr>
+
+endif
+"}}}2
+" EasyMotion {{{2
+if g:enabledPlugins['vim_easymotion'] ==# 1
+"Plugin 'easymotion/vim-easymotion'
+set rtp+=~/.vim/bundle/vim-easymotion
+
+" keep the cursor on the same line when using easymode jk
+let g:EasyMotion_startofline = 0
+
+" Use capital letters when displaying locations
+" NOTE: Doesn't seem to work as of 2020/5/13
+"let g:EasyMotion_use_upper = 1
+
+" Use smart case for searches
+let g:EasyMotion_smartcase = 1
+
+" change the prefix key used in the bindings
+map , <Plug>(easymotion-prefix)
+
+" allow ,s to be used to search only on one line
+nmap ,s <Plug>(easymotion-sl)
+xmap ,s <Plug>(easymotion-sl)
+omap ,s <Plug>(easymotion-sl)
+
+" use <leader>,s to search over the whole file without looking into other
+" windows
+nmap <leader>,f <Plug>(easymotion-s)
+xmap <leader>,f <Plug>(easymotion-s)
+omap <leader>,f <Plug>(easymotion-s)
+
+" allow overwin motions
+nmap <Leader>f <Plug>(easymotion-overwin-f)
+xmap <Leader>f <Plug>(easymotion-bd-f)
+omap <Leader>f <Plug>(easymotion-bd-f)
+
+" allow double char search
+nmap <Leader>s <Plug>(easymotion-overwin-f2)
+xmap <Leader>s <Plug>(easymotion-bd-f2)
+omap <Leader>s <Plug>(easymotion-bd-f2)
+
+" allow j and k to be used to go to the beginning and ends of lines
+map ,J <Plug>(easymotion-sol-j)
+map ,K <Plug>(easymotion-sol-k)
+map ,<c-j> <Plug>(easymotion-eol-j)
+map ,<c-k> <Plug>(easymotion-eol-k)
+
+" allow sn mapping as well
+nmap <leader><leader>s <Plug>(easymotion-sn)
+xmap <leader><leader>s <Plug>(easymotion-sn)
+omap <leader><leader>s <Plug>(easymotion-sn)
+
+endif
+"}}}2
+" NerdCommenter {{{2
+if g:enabledPlugins['nerdcommenter'] ==# 1
+"Plugin 'ddollar/nerdcommenter'
+set rtp+=~/.vim/bundle/nerdcommenter
+
+endif
+" }}}2
+" CtrlSpace {{{2
+if g:enabledPlugins['vim_ctrlspace'] ==# 1
+"Plugin 'vim-ctrlspace/vim-ctrlspace'
+set rtp+=~/.vim/bundle/vim-ctrlspace
+
+" allow alternate access to the plugin if <c-space> doesn't work
+nnoremap <silent> <leader><leader>b :CtrlSpace<cr>
+
+endif
+" }}}2
+" YouCompleteMe {{{2
+if g:enabledPlugins['YouCompleteMe'] ==# 1
+"Plugin 'valloric/youcompleteme'
+set rtp+=~/.vim/bundle/youcompleteme
+
+" syntastic has to be disabled for java when using ycm
+if g:enabledPlugins['syntastic'] ==# 1
+    let g:syntastic_java_checkers = []
+endif
+
+" disable documentation display on cursor hover
+" Note: read up on this, 0 isn't a good value
+"let g:ycm_auto_hover = 0
+
+" instead allow this to be activated with a mapping
+nnoremap <leader>di <plug>(YCMHover)
+
+
+" allow language identifiers to be seeded from the language's syntax file
+let g:ycm_seed_identifiers_with_syntax = 1
+
+" if 1: closes the preview window after a preview is completed
+let g:ycm_autoclose_preview_window_after_completion = 0
+
+" the keys that are used to go backwards in the completion menu
+let g:ycm_key_list_previous_completion = ['<S-TAB>', '<Up>']
+
+" these keys will close the completion menu
+let g:ycm_key_list_stop_completion = ['<C-y>']
+
+" the key used to invoke the completion menu
+" By default it is <C-Space>
+"let g:ycm_key_invoke_completion = '<C-Space>'
+
+
+" the black list for ycm: filetypes in this list will be ignored by ycm
+  let g:ycm_filetype_blacklist = {
+        \ 'tagbar': 1,
+        \ 'notes': 1,
+        \ 'markdown': 1,
+        \ 'netrw': 1,
+        \ 'unite': 1,
+        \ 'text': 1,
+        \ 'vimwiki': 1,
+        \ 'pandoc': 1,
+        \ 'infolog': 1,
+        \ 'leaderf': 1,
+        \ 'mail': 1
+        \}
+
+
+" allow refactoring easily
+cnoreabbrev ymrf YcmCompleter RefactorRename 
+
+" most mappings involve <leader like key>d, so we will clear it
+nmap <leader>d <nop>
+
+nnoremap <silent> <leader>dd :YcmShowDetailedDiagnostic<cr>
+let g:ycm_key_detailed_diagnostics = '<leader>dd'
+nnoremap <silent> <leader>dr :YcmCompleter GoToReferences<cr>
+nnoremap <silent> <leader>df :YcmCompleter FixIt<cr>
+nnoremap <silent> <leader>dF :YcmCompleter Format<cr>
+nnoremap <leader><leader>dr :YcmCompleter RefactorRename 
+
+" opens goto but in different window styles
+nnoremap <silent> <leader>dg :YcmCompleter GoToImprecise<cr>
+nnoremap <silent> <leader><leader>dg :YcmCompleter GoTo<cr>
+
+" go to the declaration
+nnoremap <leader>dn :YcmCompleter GoToDeclaration<cr>
+" the goto command currently tries to find a definition within a file,
+" while this command will always try to find the definition
+nnoremap <leader><leader>dn :YcmCompleter GoToDefinition<cr>
+
+
+" open the documentation for the item under the cursor
+" this one doesn't recompile the code
+nnoremap <leader>dD :YcmCompleter GetDocImprecise<cr>
+" this one does
+nnoremap <leader><leader>dD :YcmCompleter GetDoc<cr>
+
+" finds the type of the object under the cursor
+nnoremap <leader>dt :YcmCompleter GetTypeImprecise<cr>
+nnoremap <leader><leader>dt :YcmCompleter GetType<cr>
+
+
+" allow enabling and disabling of ycm auto typing\
+" turn off YCM
+nnoremap <leader>do :let g:ycm_auto_trigger=0<CR>
+" turn on YCM
+nnoremap <leader>dO :let g:ycm_auto_trigger=1<CR>
+
+" restart the ycm server
+nnoremap <leader>dR :YcmRestartServer<CR>
+
+" force recompilation and diagnostics
+nnoremap <leader>dc :YcmForceCompileAndDiagnostics<CR>
+
+endif
+" }}}2
+" fzf {{{2
+if g:enabledPlugins['fzf'] ==# 1
+set rtp+=~/.vim/bundle/fzf
+
+endif
+" }}}2
+" CamelCaseMotion {{{2
+if g:enabledPlugins['CamelCaseMotion'] ==# 1
+set rtp+=~/.vim/bundle/CamelCaseMotion
+
+let g:camelcasemotion_key = '<tab>'
+
+
+endif
+" }}}2
 "}}}
 "Search Functionality -----{{{
 
@@ -568,22 +878,6 @@ command! -nargs=+ FindFile call FindFiles(<f-args>)
 
 "}}}
 "Key Remapping -----{{{
-"Key readjustments -----{{{2
-
-" remap leader key
-nnoremap <space> <Nop>
-let mapleader = " "
-
-" in insert mode <c-b> acts like a leader key
-inoremap <c-b> <nop>
-
-" make alt work right on different terminals
-set <M-h>=h
-set <M-j>=j
-set <M-k>=k
-set <M-l>=l
-
-"}}}2
 "Function Keys and Critical Mappings ---{{{2
 "<F1> ---{{{3
 " enable easy toggling of relative numbers
@@ -737,37 +1031,70 @@ nnoremap <F12> :source $MYVIMRC<cr>
 " also allows h and l to scroll faster
 " press gl to activate, press gl or <esc> in normal mode to deactivate
 let g:ScrollEnabled = 0
+" save the current cursor settings
+let g:CursorHighlightFG = ""
+let g:CursorHighlightBG = ""
+
+let g:TerminalCursorSetting = ""
+
 func! ToggleScrollMode()
-  if g:ScrollEnabled ==# 0
-      nnoremap j <c-e>
-      nnoremap k <c-y>
-      nnoremap h 3<c-e>
-      nnoremap l 3<c-y>
-      nnoremap <esc> :call ToggleScrollMode()<cr>
-      nnoremap i :call ToggleScrollMode()<cr>
-      nnoremap a :call ToggleScrollMode()<cr>
-      nnoremap I :call ToggleScrollMode()<cr>
-      nnoremap A :call ToggleScrollMode()<cr>
-      nnoremap o :call ToggleScrollMode()<cr>
-      nnoremap O :call ToggleScrollMode()<cr>
-      let g:ScrollEnabled = 1
-      echom "-- ScrollMode Enabled --"
-  else
-      nunmap j
-      nunmap k
-      nunmap h
-      nunmap l
-      nunmap <esc>
-      nunmap i
-      nunmap a
-      nunmap I
-      nunmap A
-      nunmap o
-      nunmap O
-      let g:ScrollEnabled = 0
-      echom "-- ScrollMode Disabled --"
-  endif
+    if g:ScrollEnabled ==# 0
+        " enter scroll mode
+        
+        if has("gui_running")
+            " save previous cursor highlight settings
+            let g:CursorHighlightFG = synIDattr(synIDtrans(hlID("Cursor")), "fg")
+            let g:CursorHighlightBG = synIDattr(synIDtrans(hlID("Cursor")), "bg")
+            " clear the cursor highlighting
+            highlight Cursor guibg=NONE guifg=NONE
+        else
+            " save the value for later and disble t_ve
+            let g:TerminalCursorSetting = &t_ve
+            set t_ve=
+        endif
+
+        nnoremap j <c-e>
+        nnoremap k <c-y>
+        nnoremap h 3<c-e>
+        nnoremap l 3<c-y>
+        nnoremap <esc> :call ToggleScrollMode()<cr>
+        nnoremap i :call ToggleScrollMode()<cr>
+        nnoremap a :call ToggleScrollMode()<cr>
+        nnoremap I :call ToggleScrollMode()<cr>
+        nnoremap A :call ToggleScrollMode()<cr>
+        nnoremap o :call ToggleScrollMode()<cr>
+        nnoremap O :call ToggleScrollMode()<cr>
+        let g:ScrollEnabled = 1
+        echom "-- ScrollMode Enabled --"
+    else
+        " undo scroll mode
+        
+        if has("gui_running")
+            " return cursor highlighting
+            exec "highlight Cursor guifg=".g:CursorHighlightFG
+            exec "highlight Cursor guibg=".g:CursorHighlightBG
+        else
+            " restore terminal cursor highlighting
+            let &t_ve = g:TerminalCursorSetting
+        endif
+
+        " unmap movement and modal keys
+        nunmap j
+        nunmap k
+        nunmap h
+        nunmap l
+        nunmap <esc>
+        nunmap i
+        nunmap a
+        nunmap I
+        nunmap A
+        nunmap o
+        nunmap O
+        let g:ScrollEnabled = 0
+        echom "-- ScrollMode Disabled --"
+    endif
 endfunc
+
 nnoremap gl :call ToggleScrollMode()<cr>
 "}}}3
 
@@ -793,6 +1120,9 @@ inoremap <M-h> <left>
 inoremap <M-j> <down>
 inoremap <M-k> <up>
 inoremap <M-l> <right>
+" allow easy word movement
+inoremap <M-w> <esc>lwi
+inoremap <M-b> <esc>bi
 
 " allows easy movement one space over using <c-g>
 inoremap <c-g><c-l> <right>
@@ -980,308 +1310,19 @@ nmap <leader>Qy <leader>Q<cr>0v$h"qy
 cnoreabbrev termp terminal pwsh
 cnoreabbrev termb terminal bash
 cnoreabbrev termc terminal cmd
+
+"" make alt work for desired keys
+tmap <expr> <m-h> SendToTerm("h")
+tmap <expr> <m-j> SendToTerm("j")
+tmap <expr> <m-k> SendToTerm("k")
+tmap <expr> <m-l> SendToTerm("l")
+tmap <expr> <m-o> SendToTerm("o")
+func! SendToTerm(what)
+  call term_sendkeys('', a:what)
+  return ''
+endfunc 
 " }}}
 
-"Plugin Settings {{{
-" Startup {{{2
-" does basic bookkeeping for plugins
-"
-" figure out which plugins are active
-let s:enabledPluginsRaw = readfile(expand('$HOME/.vim/enabled_plugins.txt'))
-call filter(s:enabledPluginsRaw, 'v:val !~ ''\v^\s*#'' && v:val =~ ''\v^\s*%(\S+)\s+%(\d)\s*$''')
-
-let g:enabledPlugins = {}
-for item in s:enabledPluginsRaw
-    " gets the plugin name
-    let k = matchstr(item, '\v^%(\s*)@<=\S+%(\s+\d+\s*$)@=') 
-    " gets the plugin state
-    let v = matchstr(item, '\v^{-}%(\s*\S+\s+)@<=\d+%(\s*$)@=') 
-    " add to dictionary
-    let g:enabledPlugins[k] = v
-endfor
-
-" checks for command line overide of enabled plugins
-if exists('g:Cli_Plugs')
-    for item in split(g:Cli_Plugs, ' ') 
-        if len(item) !=# 0 && item =~ '\v\S+:[01]'
-            let kv = split(item, ':')
-            let g:enabledPlugins[kv[0]] = kv[1]
-        endif
-    endfor
-endif
-
-" }}}2
-" setup vundle
-filetype off
-set rtp+=~/.vim/bundle/Vundle.vim
-"call vundle#begin()
-"Plugin 'VundleVim/Vundle.vim'
-"Man.vim {{{2
-" allows unix man pages to be read within vim (on unix system)
-" additionally <s-k> can be used to search up a term by going outside
-" of vim
-runtime ftplugin/man.vim
-"}}}2
-"Netrw {{{2
-" starts netrw without the banner by default
-let g:netrw_banner=0
-
-" cause Netrw buffers to be closable
-augroup Netrw
-    autocmd!
-    autocmd FileType netrw setl bufhidden=wipe
-augroup END
-"}}}2
-"Syntastic {{{2
-if g:enabledPlugins['syntastic'] ==# 1
-"Plugin 'vim-syntastic/syntastic'
-set rtp+=~/.vim/bundle/syntastic
-
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-
-" when enabled causes syntastic to check files when first loaded and when saving
-let g:syntastic_check_on_open = 1
-
-let g:syntastic_check_on_wq = 0
-
-" causes syntastic to not start up until asked
-let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
-
-" pops open syntastic
-nnoremap <c-w>e :SyntasticCheck<CR>
-nnoremap <c-w><c-e> :SyntasticCheck<CR>
-" resets (hides)
-nnoremap <leader><c-w>e :SyntasticReset<CR>
-nnoremap <leader><c-w><c-e> :SyntasticReset<CR>
-
-endif
-"}}}2
-"NERDTree {{{2
-if g:enabledPlugins['nerdtree'] ==# 1
-"Plugin 'scrooloose/nerdtree'
-set rtp+=~/.vim/bundle/nerdtree
-" open and close nerdtree on demand
-
-nnoremap <silent> <c-w><c-\> :NERDTreeToggle<cr>
-nnoremap <silent> <c-w>\ :NERDTreeToggle<cr>
-
-endif
-"}}}2
-"buffergator {{{2
-if g:enabledPlugins['vim_buffergator'] ==# 1
-"Plugin 'jeetsukumaran/vim-buffergator'
-set rtp+=~/.vim/bundle/vim-buffergator
-
-" causes the window not to expand when the plugin is opened
-let g:buffergator_autoexpand_on_split=0
-
-" sort by most recently used
-let g:buffergator_sort_regime="mru"
-
-" display files with their parent directory
-let g:buffergator_display_regime="parentdir"
-
-" keeps the plugin from remapping keys on its own
-let g:buffergator_suppress_keymaps=1
-
-" now provide our own mappings
-nnoremap <silent> <leader>b :BuffergatorToggle<cr>
-nnoremap <silent> <leader>B :BuffergatorTabsToggle<cr>
-
-endif
-"}}}2
-" EasyMotion {{{2
-if g:enabledPlugins['vim_easymotion'] ==# 1
-"Plugin 'easymotion/vim-easymotion'
-set rtp+=~/.vim/bundle/vim-easymotion
-
-" keep the cursor on the same line when using easymode jk
-let g:EasyMotion_startofline = 0
-
-" Use capital letters when displaying locations
-" NOTE: Doesn't seem to work as of 2020/5/13
-"let g:EasyMotion_use_upper = 1
-
-" Use smart case for searches
-let g:EasyMotion_smartcase = 1
-
-" change the prefix key used in the bindings
-map , <Plug>(easymotion-prefix)
-
-" allow ,s to be used to search only on one line
-nmap ,s <Plug>(easymotion-sl)
-xmap ,s <Plug>(easymotion-sl)
-omap ,s <Plug>(easymotion-sl)
-
-" use <leader>,s to search over the whole file without looking into other
-" windows
-nmap <leader>,f <Plug>(easymotion-s)
-xmap <leader>,f <Plug>(easymotion-s)
-omap <leader>,f <Plug>(easymotion-s)
-
-" allow overwin motions
-nmap <Leader>f <Plug>(easymotion-overwin-f)
-xmap <Leader>f <Plug>(easymotion-bd-f)
-omap <Leader>f <Plug>(easymotion-bd-f)
-
-" allow double char search
-nmap <Leader>s <Plug>(easymotion-overwin-f2)
-xmap <Leader>s <Plug>(easymotion-bd-f2)
-omap <Leader>s <Plug>(easymotion-bd-f2)
-
-" allow j and k to be used to go to the beginning and ends of lines
-map ,J <Plug>(easymotion-sol-j)
-map ,K <Plug>(easymotion-sol-k)
-map ,<c-j> <Plug>(easymotion-eol-j)
-map ,<c-k> <Plug>(easymotion-eol-k)
-
-" allow sn mapping as well
-nmap <leader><leader>s <Plug>(easymotion-sn)
-xmap <leader><leader>s <Plug>(easymotion-sn)
-omap <leader><leader>s <Plug>(easymotion-sn)
-
-endif
-"}}}2
-" NerdCommenter {{{2
-if g:enabledPlugins['nerdcommenter'] ==# 1
-"Plugin 'ddollar/nerdcommenter'
-set rtp+=~/.vim/bundle/nerdcommenter
-
-endif
-" }}}2
-" CtrlSpace {{{2
-if g:enabledPlugins['vim_ctrlspace'] ==# 1
-"Plugin 'vim-ctrlspace/vim-ctrlspace'
-set rtp+=~/.vim/bundle/vim-ctrlspace
-
-" allow alternate access to the plugin if <c-space> doesn't work
-nnoremap <silent> <leader><leader>b :CtrlSpace<cr>
-
-endif
-" }}}2
-" YouCompleteMe {{{2
-if g:enabledPlugins['YouCompleteMe'] ==# 1
-"Plugin 'valloric/youcompleteme'
-set rtp+=~/.vim/bundle/youcompleteme
-
-" syntastic has to be disabled for java when using ycm
-if g:enabledPlugins['syntastic'] ==# 1
-    let g:syntastic_java_checkers = []
-endif
-
-" disable documentation display on cursor hover
-" Note: read up on this, 0 isn't a good value
-"let g:ycm_auto_hover = 0
-
-" instead allow this to be activated with a mapping
-nnoremap <leader>di <plug>(YCMHover)
-
-
-" allow language identifiers to be seeded from the language's syntax file
-let g:ycm_seed_identifiers_with_syntax = 1
-
-" if 1: closes the preview window after a preview is completed
-let g:ycm_autoclose_preview_window_after_completion = 0
-
-" the keys that are used to go backwards in the completion menu
-let g:ycm_key_list_previous_completion = ['<S-TAB>', '<Up>']
-
-" these keys will close the completion menu
-let g:ycm_key_list_stop_completion = ['<C-y>']
-
-" the key used to invoke the completion menu
-" By default it is <C-Space>
-"let g:ycm_key_invoke_completion = '<C-Space>'
-
-
-" the black list for ycm: filetypes in this list will be ignored by ycm
-  let g:ycm_filetype_blacklist = {
-        \ 'tagbar': 1,
-        \ 'notes': 1,
-        \ 'markdown': 1,
-        \ 'netrw': 1,
-        \ 'unite': 1,
-        \ 'text': 1,
-        \ 'vimwiki': 1,
-        \ 'pandoc': 1,
-        \ 'infolog': 1,
-        \ 'leaderf': 1,
-        \ 'mail': 1
-        \}
-
-
-" allow refactoring easily
-cnoreabbrev ymrf YcmCompleter RefactorRename 
-
-" most mappings involve <leader like key>d, so we will clear it
-nmap <leader>d <nop>
-
-nnoremap <silent> <leader>dd :YcmShowDetailedDiagnostic<cr>
-let g:ycm_key_detailed_diagnostics = '<leader>dd'
-nnoremap <silent> <leader>dr :YcmCompleter GoToReferences<cr>
-nnoremap <silent> <leader>df :YcmCompleter FixIt<cr>
-nnoremap <silent> <leader>dF :YcmCompleter Format<cr>
-nnoremap <leader><leader>dr :YcmCompleter RefactorRename 
-
-" opens goto but in different window styles
-nnoremap <silent> <leader>dg :YcmCompleter GoToImprecise<cr>
-nnoremap <silent> <leader><leader>dg :YcmCompleter GoTo<cr>
-
-" go to the declaration
-nnoremap <leader>dn :YcmCompleter GoToDeclaration<cr>
-" the goto command currently tries to find a definition within a file,
-" while this command will always try to find the definition
-nnoremap <leader><leader>dn :YcmCompleter GoToDefinition<cr>
-
-
-" open the documentation for the item under the cursor
-" this one doesn't recompile the code
-nnoremap <leader>dD :YcmCompleter GetDocImprecise<cr>
-" this one does
-nnoremap <leader><leader>dD :YcmCompleter GetDoc<cr>
-
-" finds the type of the object under the cursor
-nnoremap <leader>dt :YcmCompleter GetTypeImprecise<cr>
-nnoremap <leader><leader>dt :YcmCompleter GetType<cr>
-
-
-" allow enabling and disabling of ycm auto typing\
-" turn off YCM
-nnoremap <leader>do :let g:ycm_auto_trigger=0<CR>
-" turn on YCM
-nnoremap <leader>dO :let g:ycm_auto_trigger=1<CR>
-
-" restart the ycm server
-nnoremap <leader>dR :YcmRestartServer<CR>
-
-" force recompilation and diagnostics
-nnoremap <leader>dc :YcmForceCompileAndDiagnostics<CR>
-
-endif
-" }}}2
-" fzf {{{2
-if g:enabledPlugins['fzf'] ==# 1
-set rtp+=~/.vim/bundle/fzf
-
-endif
-" }}}2
-" CamelCaseMotion {{{2
-if g:enabledPlugins['CamelCaseMotion'] ==# 1
-set rtp+=~/.vim/bundle/CamelCaseMotion
-
-let g:camelcasemotion_key = '<tab>'
-
-
-endif
-" }}}2
-"call vundle#end()
-filetype plugin indent on
-"}}}
 "{{{Source Custom Modules
 source ~/.vim/custom_modules/MyNotesFold/MyNotesFold.vim
 
