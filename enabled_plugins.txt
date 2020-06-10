@@ -17,3 +17,4 @@ vim_easymotion 1
 YouCompleteMe 0
 fzf 1
 CamelCaseMotion 1
+scrollmode 1

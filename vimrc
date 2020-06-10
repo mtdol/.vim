@@ -385,6 +385,12 @@ let g:camelcasemotion_key = '<tab>'
 
 endif
 " }}}2
+" scrollmode {{{2
+if g:enabledPlugins['scrollmode'] ==# 1
+set rtp+=~/.vim/bundle/scrollmode
+
+endif
+" }}}2
 "}}}
 "Search Functionality -----{{{
 
@@ -1025,78 +1031,78 @@ nnoremap <F12> :source $MYVIMRC<cr>
 "}}}3
 "}}}2
 "General Mappings ---{{{2
-"Scroll Mode {{{3
-" allows screen movement regardless of cursor in insert mode
-" makes j and k act like <c-e> and <c-y>
-" also allows h and l to scroll faster
-" press gl to activate, press gl or <esc> in normal mode to deactivate
-let g:ScrollEnabled = 0
-" save the current cursor settings
-let g:CursorHighlightFG = ""
-let g:CursorHighlightBG = ""
+" "Scroll Mode {{{3
+" " allows screen movement regardless of cursor in insert mode
+" " makes j and k act like <c-e> and <c-y>
+" " also allows h and l to scroll faster
+" " press gl to activate, press gl or <esc> in normal mode to deactivate
+" let g:ScrollEnabled = 0
+" " save the current cursor settings
+" let g:CursorHighlightFG = ""
+" let g:CursorHighlightBG = ""
 
-let g:TerminalCursorSetting = ""
+" let g:TerminalCursorSetting = ""
 
-func! ToggleScrollMode()
-    if g:ScrollEnabled ==# 0
-        " enter scroll mode
+" func! ToggleScrollMode()
+"     if g:ScrollEnabled ==# 0
+"         " enter scroll mode
         
-        if has("gui_running")
-            " save previous cursor highlight settings
-            let g:CursorHighlightFG = synIDattr(synIDtrans(hlID("Cursor")), "fg")
-            let g:CursorHighlightBG = synIDattr(synIDtrans(hlID("Cursor")), "bg")
-            " clear the cursor highlighting
-            highlight Cursor guibg=NONE guifg=NONE
-        else
-            " save the value for later and disble t_ve
-            let g:TerminalCursorSetting = &t_ve
-            set t_ve=
-        endif
+"         if has("gui_running")
+"             " save previous cursor highlight settings
+"             let g:CursorHighlightFG = synIDattr(synIDtrans(hlID("Cursor")), "fg")
+"             let g:CursorHighlightBG = synIDattr(synIDtrans(hlID("Cursor")), "bg")
+"             " clear the cursor highlighting
+"             highlight Cursor guibg=NONE guifg=NONE
+"         else
+"             " save the value for later and disble t_ve
+"             let g:TerminalCursorSetting = &t_ve
+"             set t_ve=
+"         endif
 
-        nnoremap j <c-e>
-        nnoremap k <c-y>
-        nnoremap h 3<c-e>
-        nnoremap l 3<c-y>
-        nnoremap <esc> :call ToggleScrollMode()<cr>
-        nnoremap i :call ToggleScrollMode()<cr>
-        nnoremap a :call ToggleScrollMode()<cr>
-        nnoremap I :call ToggleScrollMode()<cr>
-        nnoremap A :call ToggleScrollMode()<cr>
-        nnoremap o :call ToggleScrollMode()<cr>
-        nnoremap O :call ToggleScrollMode()<cr>
-        let g:ScrollEnabled = 1
-        echom "-- ScrollMode Enabled --"
-    else
-        " undo scroll mode
+"         nnoremap j <c-e>
+"         nnoremap k <c-y>
+"         nnoremap h 3<c-e>
+"         nnoremap l 3<c-y>
+"         nnoremap <esc> :call ToggleScrollMode()<cr>
+"         nnoremap i :call ToggleScrollMode()<cr>
+"         nnoremap a :call ToggleScrollMode()<cr>
+"         nnoremap I :call ToggleScrollMode()<cr>
+"         nnoremap A :call ToggleScrollMode()<cr>
+"         nnoremap o :call ToggleScrollMode()<cr>
+"         nnoremap O :call ToggleScrollMode()<cr>
+"         let g:ScrollEnabled = 1
+"         echom "-- ScrollMode Enabled --"
+"     else
+"         " undo scroll mode
         
-        if has("gui_running")
-            " return cursor highlighting
-            exec "highlight Cursor guifg=".g:CursorHighlightFG
-            exec "highlight Cursor guibg=".g:CursorHighlightBG
-        else
-            " restore terminal cursor highlighting
-            let &t_ve = g:TerminalCursorSetting
-        endif
+"         if has("gui_running")
+"             " return cursor highlighting
+"             exec "highlight Cursor guifg=".g:CursorHighlightFG
+"             exec "highlight Cursor guibg=".g:CursorHighlightBG
+"         else
+"             " restore terminal cursor highlighting
+"             let &t_ve = g:TerminalCursorSetting
+"         endif
 
-        " unmap movement and modal keys
-        nunmap j
-        nunmap k
-        nunmap h
-        nunmap l
-        nunmap <esc>
-        nunmap i
-        nunmap a
-        nunmap I
-        nunmap A
-        nunmap o
-        nunmap O
-        let g:ScrollEnabled = 0
-        echom "-- ScrollMode Disabled --"
-    endif
-endfunc
+"         " unmap movement and modal keys
+"         nunmap j
+"         nunmap k
+"         nunmap h
+"         nunmap l
+"         nunmap <esc>
+"         nunmap i
+"         nunmap a
+"         nunmap I
+"         nunmap A
+"         nunmap o
+"         nunmap O
+"         let g:ScrollEnabled = 0
+"         echom "-- ScrollMode Disabled --"
+"     endif
+" endfunc
 
-nnoremap gl :call ToggleScrollMode()<cr>
-"}}}3
+" nnoremap gl :call ToggleScrollMode()<cr>
+" "}}}3
 
 " speedier movement
 nnoremap <c-l> w
