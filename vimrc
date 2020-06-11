@@ -389,6 +389,26 @@ endif
 if g:enabledPlugins['scrollmode'] ==# 1
 set rtp+=~/.vim/bundle/scrollmode
 
+" let g:ScrollMode_ExitScrollModeKeys = [
+"     \ "<esc>",
+"     \ "i",
+"     \ "I",
+"     \ "A",
+"     \ "o",
+"     \ "z",
+" \]
+
+" " keys to use for scrolling when scroll mode is active
+" let g:ScrollMode_ScrollUpKeys = ["k"]
+" let g:ScrollMode_ScrollDownKeys = ["j","e"]
+" let g:ScrollMode_ScrollUpHardKeys = ["l"]
+" let g:ScrollMode_ScrollDownHardKeys = ["h","p"]
+
+" let g:ScrollMode_UpScrollSpeed = 5
+" let g:ScrollMode_DownScrollSpeed = 1
+" let g:ScrollMode_UpHardScrollSpeed = 1
+" let g:ScrollMode_DownHardScrollSpeed = 9
+
 endif
 " }}}2
 "}}}

@@ -28,3 +28,6 @@
 [submodule "bundle/CamelCaseMotion"]
 	path = bundle/CamelCaseMotion
 	url = https://github.com/bkad/CamelCaseMotion
+[submodule "bundle/scrollmode"]
+	path = bundle/scrollmode
+	url = https://github.com/mtdol/scrollmode.git
