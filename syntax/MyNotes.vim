@@ -7,7 +7,7 @@ endif
 
 " when set to 1, runs intensive matching, when 0 does not
 " 0 is better for performance
-let intensive = 1
+let intensive = 0
 
 " section headers
 syn match headerText '\v(^\s*)@<=\S.*(::[0-9]?\s*$)@='

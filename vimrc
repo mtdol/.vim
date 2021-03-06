@@ -219,21 +219,20 @@ let g:EasyMotion_smartcase = 1
 " change the prefix key used in the bindings
 map , <Plug>(easymotion-prefix)
 
-" allow ,s to be used to search only on one line
-nmap ,s <Plug>(easymotion-sl)
-xmap ,s <Plug>(easymotion-sl)
-omap ,s <Plug>(easymotion-sl)
+" search only on one line
+nmap <leader>f <Plug>(easymotion-sl)
+xmap <leader>f <Plug>(easymotion-sl)
+omap <leader>f <Plug>(easymotion-sl)
 
-" use <leader>,s to search over the whole file without looking into other
-" windows
-nmap <leader>,f <Plug>(easymotion-s)
-xmap <leader>,f <Plug>(easymotion-s)
-omap <leader>,f <Plug>(easymotion-s)
+" search over the whole file without looking into other windows
+nmap <leader>,s <Plug>(easymotion-s)
+xmap <leader>,s <Plug>(easymotion-s)
+omap <leader>,s <Plug>(easymotion-s)
 
 " allow overwin motions
-nmap <Leader>f <Plug>(easymotion-overwin-f)
-xmap <Leader>f <Plug>(easymotion-bd-f)
-omap <Leader>f <Plug>(easymotion-bd-f)
+nmap ,s <Plug>(easymotion-overwin-f)
+xmap ,s <Plug>(easymotion-bd-f)
+omap ,s <Plug>(easymotion-bd-f)
 
 " allow double char search
 nmap <Leader>s <Plug>(easymotion-overwin-f2)
@@ -561,6 +560,7 @@ set tabstop=8 softtabstop=4 expandtab shiftwidth=4
 "File type sensitive indentation
 augroup indentation
     autocmd FileType Ruby :setlocal softtabstop=2 shiftwidth=2
+    autocmd FileType Scheme :setlocal softtabstop=2 shiftwidth=2
 augroup END
 
 "indent to the same level of the previous line"
@@ -1166,6 +1166,9 @@ inoremap '' ''<esc>i
 " add an additional mapping for the escape key
 inoremap kj <esc>
 
+"alternative way to enter insert mode
+nnoremap <M-s> i
+
 " exit insert mode without heading left (except for end of line)
 inoremap <c-f> <esc><right>
 
@@ -1176,7 +1179,7 @@ nnoremap <leader>l :ls<cr>:b
 nnoremap <leader>w :write<cr>
 
 " allows universal closing of a buffer without closing a window
-nnoremap <silent> <leader>q :bp<bar>sp<bar>bn<bar>bd!<CR>
+nnoremap <silent> <leader><leader>q :bp<bar>sp<bar>bn<bar>bd!<CR>
 
 " remaps _ to search a char backward (what comma usually does)
 nnoremap _ ,
@@ -1218,6 +1221,9 @@ nnoremap <leader>O mqO<esc>`q
 nnoremap -o o<esc>
 nnoremap -O O<esc>
 
+" like above, but autopaste
+nnoremap <leader>-o o<esc>"+p
+
 " adds a semicolon to end of line then returns to same spot
 nnoremap <leader>; mqA;<esc>`q
 " also works in insert mode
@@ -1232,6 +1238,10 @@ vnoremap <leader>) <esc>`>a)<esc>`<i(<esc>`><right><right>
 " repeats the char pressed after the s command v:count1 times
 nnoremap <silent> s :<c-u>exec "normal i".repeat(nr2char(getchar()), v:count1)<cr>
 nnoremap <silent> S :<c-u>exec "normal a".repeat(nr2char(getchar()), v:count1)<cr>
+
+" causes the current line to be indented to the level of the previous level
+" while in insert mode
+:inoremap <c-d> <Esc>:call setline(".",substitute(getline(line(".")),'^\s*',matchstr(getline(line(".")-1),'^\s*'),''))<CR>I
 
 " inserts braces while in insert mode
 inoremap <c-b>b <esc>$a<space>{<cr>}<esc>O<tab>
