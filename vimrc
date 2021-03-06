@@ -1197,6 +1197,8 @@ nnoremap <leader>gb :bprev<cr>
 " sets <c-w><c-t> to behave as :tabe %
 nnoremap <c-w><c-t> :tabe %<cr>
 
+" if ctrl-v does not work on linux, then use this
+nnoremap <leader>V <c-v>
 
 
 " allows macros to be run on multiple lines
