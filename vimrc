@@ -561,6 +561,7 @@ set tabstop=8 softtabstop=4 expandtab shiftwidth=4
 augroup indentation
     autocmd FileType Ruby :setlocal softtabstop=2 shiftwidth=2
     autocmd FileType Scheme :setlocal softtabstop=2 shiftwidth=2
+    autocmd FileType voscm :setlocal softtabstop=2 shiftwidth=2
 augroup END
 
 "indent to the same level of the previous line"
